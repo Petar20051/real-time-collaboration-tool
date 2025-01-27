@@ -1,4 +1,3 @@
-// socketHandler.js
 const { Server } = require('socket.io');
 
 const socketHandler = (server) => {
@@ -12,10 +11,15 @@ const socketHandler = (server) => {
   io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`);
 
-    // Handle incoming events from clients
-    socket.on('send-changes', (delta) => {
-      // Broadcast the changes to all other connected clients
-      socket.broadcast.emit('receive-changes', delta);
+    // Handle joining a specific room
+    socket.on('join-room', (roomId) => {
+      socket.join(roomId);
+      console.log(`User ${socket.id} joined room ${roomId}`);
+    });
+
+    // Handle text changes
+    socket.on('send-changes', (delta, roomId) => {
+      socket.to(roomId).emit('receive-changes', delta); // Broadcast to the room only
     });
 
     socket.on('disconnect', () => {

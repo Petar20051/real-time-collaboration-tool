@@ -1,36 +1,18 @@
-// middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
 
-// Middleware to protect routes
-const protect = async (req, res, next) => {
-  let token;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    try {
-      token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.id).select('-password');
-      next();
-    } catch (error) {
-      res.status(401).json({ message: 'Not authorized, token failed' });
-    }
-  }
+const authenticateToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
   if (!token) {
-    res.status(401).json({ message: 'Not authorized, no token' });
+    return res.status(401).json({ message: 'Unauthorized: No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // Add user info to the request
+    next();
+  } catch (err) {
+    res.status(403).json({ message: 'Unauthorized: Invalid token' });
   }
 };
 
-// Middleware to enforce role-based access
-const authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ message: 'Forbidden: Access is denied' });
-    }
-    next();
-  };
-};
-
-module.exports = { protect, authorize };
+module.exports = { authenticateToken };
