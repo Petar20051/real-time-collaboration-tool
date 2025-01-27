@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import "../styles/Auth.css"
+// src/components/Login.js
+import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../utils/api';
+import { AuthContext } from '../context/AuthContext';
+import '../styles/Auth.css'
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [message, setMessage] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+  const { login: loginUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -13,24 +20,34 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/login', formData);
-      localStorage.setItem('token', response.data.token);
-      setMessage('Login successful!');
+      const data = await login(formData);
+      loginUser(data);
+      navigate('/dashboard');
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Login failed.');
+      console.error('Login failed:', error);
     }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input name="email" placeholder="Email" onChange={handleChange} required />
-        <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-        <button type="submit">Login</button>
-      </form>
-      <p>{message}</p>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        value={formData.password}
+        onChange={handleChange}
+        required
+      />
+      <button type="submit">Login</button>
+    </form>
   );
 };
 
