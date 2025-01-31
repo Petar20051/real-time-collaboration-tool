@@ -1,20 +1,13 @@
 // src/components/Dashboard.js
 import React from 'react';
-import { Container, Row, Col, Card, Nav } from 'react-bootstrap';
+import { Container, Row, Col, Card} from 'react-bootstrap';
+
 
 const Dashboard = () => {
   return (
     <Container fluid>
       <Row>
-        {/* Sidebar */}
-        <Col md={2} className="bg-light vh-100">
-          <h4 className="mt-4">Dashboard</h4>
-          <Nav defaultActiveKey="/home" className="flex-column">
-            <Nav.Link href="/home">Home</Nav.Link>
-            <Nav.Link eventKey="link-1">Profile</Nav.Link>
-            <Nav.Link eventKey="link-2">Settings</Nav.Link>
-          </Nav>
-        </Col>
+        
 
         {/* Main Content */}
         <Col md={10} className="p-4">

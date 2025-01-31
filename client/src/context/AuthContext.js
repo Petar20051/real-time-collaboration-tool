@@ -1,13 +1,25 @@
-// src/context/AuthContext.js
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [auth, setAuth] = useState(null);
+  // Initialize state from localStorage
+  const [auth, setAuth] = useState(() => {
+    const token = localStorage.getItem('authToken');
+    return token ? { token } : null;
+  });
 
-  const login = (userData) => {
-    setAuth(userData);
+  // Update localStorage whenever auth state changes
+  useEffect(() => {
+    if (auth) {
+      localStorage.setItem('authToken', auth.token);
+    } else {
+      localStorage.removeItem('authToken');
+    }
+  }, [auth]);
+
+  const login = (token) => {
+    setAuth({ token });
   };
 
   const logout = () => {

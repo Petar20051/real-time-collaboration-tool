@@ -24,9 +24,19 @@ const Login = () => {
       loginUser(data);
       navigate('/dashboard');
     } catch (error) {
-      console.error('Login failed:', error);
+      if (error.response) {
+        // Server responded with a status code outside the 2xx range
+        console.error('Login failed:', error.response.data.message);
+      } else if (error.request) {
+        // No response received from server
+        console.error('No response from server:', error.request);
+      } else {
+        // Other errors
+        console.error('Error during login:', error.message);
+      }
     }
   };
+  
 
   return (
     <form onSubmit={handleSubmit}>
