@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import socket from '../socket';
 
@@ -18,24 +16,58 @@ const Chat = () => {
   }, []);
 
   const sendMessage = () => {
-    socket.emit('message', input);
-    setMessages((prevMessages) => [...prevMessages, input]);
-    setInput('');
+    if (input.trim()) {
+      socket.emit('message', input);
+      setMessages((prevMessages) => [...prevMessages, input]);
+      setInput('');
+    }
   };
 
   return (
-    <div>
-      <div>
+    <div
+      style={{
+        border: '1px solid #ccc',
+        borderRadius: '6px',
+        padding: '10px',
+        maxHeight: '500px',
+        overflowY: 'auto',
+        backgroundColor: '#f8f9fa',
+      }}
+    >
+      <div style={{ marginBottom: '10px' }}>
         {messages.map((msg, index) => (
-          <p key={index}>{msg}</p>
+          <p key={index} style={{ margin: '5px 0', wordBreak: 'break-word' }}>
+            {msg}
+          </p>
         ))}
       </div>
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Type a message..."
-      />
-      <button onClick={sendMessage}>Send</button>
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Type a message..."
+          style={{
+            flex: 1,
+            padding: '8px',
+            borderRadius: '4px',
+            border: '1px solid #ccc',
+          }}
+        />
+        <button
+          onClick={sendMessage}
+          style={{
+            padding: '8px 12px',
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+        >
+          Send
+        </button>
+      </div>
     </div>
   );
 };

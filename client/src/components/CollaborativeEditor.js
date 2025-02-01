@@ -10,15 +10,22 @@ const CollaborativeEditor = ({ roomId }) => {
   useEffect(() => {
     const quill = new Quill(editorRef.current, {
       theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, false] }],
+          ['bold', 'italic', 'underline'],
+          ['image', 'code-block']
+        ]
+      }
     });
 
-    // Fetch existing document content
+    // Load existing document content from the backend
     const loadDocument = async () => {
       try {
-        const response = await axios.get(`/api/documents/${roomId}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        const response = await axios.get(`http://localhost:4000/api/documents/${roomId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
         });
-        quill.setContents(response.data.content); // Set document content
+        quill.setContents(response.data.content);
       } catch (err) {
         console.error('Error loading document:', err);
       }
@@ -39,17 +46,13 @@ const CollaborativeEditor = ({ roomId }) => {
       quill.updateContents(delta);
     });
 
-    // Periodically save the document
+    // Auto-save document
     const saveInterval = setInterval(async () => {
       try {
         const content = quill.getContents();
-        await axios.post(
-          `/api/documents/${roomId}`,
-          { content },
-          {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-          }
-        );
+        await axios.post(`http://localhost:4000/api/documents/${roomId}`, { content }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
+        });
       } catch (err) {
         console.error('Error saving document:', err);
       }
@@ -61,7 +64,11 @@ const CollaborativeEditor = ({ roomId }) => {
     };
   }, [roomId]);
 
-  return <div ref={editorRef} style={{ height: '500px', margin: '20px auto', border: '1px solid #ccc' }} />;
+  return (
+    <div style={{ width: '100%', maxWidth: '800px', margin: 'auto', padding: '10px', border: '1px solid #ccc' }}>
+      <div ref={editorRef} style={{ height: '500px' }} />
+    </div>
+  );
 };
 
 export default CollaborativeEditor;

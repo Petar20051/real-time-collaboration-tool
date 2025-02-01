@@ -9,6 +9,8 @@ import Settings from './components/Settings';
 import Profile from './components/Profile';
 import Navigation from './components/Navigation';
 
+
+
 function App() {
   return (
     <Router>
