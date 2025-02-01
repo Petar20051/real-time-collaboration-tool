@@ -4,9 +4,13 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const router = express.Router();
 
-// Generate JWT
+// Generate JWT token
 const generateToken = (id, role) => {
-  return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  // Ensure id is a string (this helps avoid potential issues)
+  const payload = { id: id.toString(), role };
+  // Log the payload for debugging (remove in production)
+  console.log('Generating token with payload:', payload);
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
 // Register a new user
@@ -19,8 +23,10 @@ router.post('/register', async (req, res) => {
     }
     const user = await User.create({ username, email, password, role });
     const token = generateToken(user._id, user.role);
+    console.log('Registration successful. Token generated:', token);
     res.status(201).json({ token });
   } catch (error) {
+    console.error('Error during registration:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -32,15 +38,15 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
     if (user && (await user.matchPassword(password))) {
       const token = generateToken(user._id, user.role);
+      console.log('Login successful. Token generated:', token);
       res.json({ token });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
     }
   } catch (error) {
+    console.error('Error during login:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
-
-
 
 module.exports = router;

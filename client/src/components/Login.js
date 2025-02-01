@@ -1,9 +1,9 @@
 // src/components/Login.js
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../utils/api';
+import { login } from '../utils/api'; // Ensure this function returns an object with { token }
 import { AuthContext } from '../context/AuthContext';
-import '../styles/Auth.css'
+import '../styles/Auth.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +21,8 @@ const Login = () => {
     e.preventDefault();
     try {
       const data = await login(formData);
-      loginUser(data);
+      // Pass only the token string to loginUser
+      loginUser(data.token);
       navigate('/dashboard');
     } catch (error) {
       if (error.response) {
@@ -36,7 +37,6 @@ const Login = () => {
       }
     }
   };
-  
 
   return (
     <form onSubmit={handleSubmit}>

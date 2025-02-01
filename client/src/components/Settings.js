@@ -1,5 +1,5 @@
 // src/components/Settings.js
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
@@ -11,6 +11,36 @@ const Settings = () => {
     email: '',
     password: '',
   });
+  const [loading, setLoading] = useState(true);
+
+  // Prepopulate the form with current profile data
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/user/profile', {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        });
+        // Assuming response.data contains username and email
+        setFormData({
+          username: response.data.username || '',
+          email: response.data.email || '',
+          password: '', // Password remains empty for security reasons
+        });
+      } catch (error) {
+        console.error('Error fetching profile for pre-population:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (auth?.token) {
+      fetchProfile();
+    } else {
+      setLoading(false);
+    }
+  }, [auth]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,6 +64,10 @@ const Settings = () => {
       alert('Failed to update profile');
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Container className="mt-5">
