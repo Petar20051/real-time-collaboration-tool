@@ -1,8 +1,8 @@
-// src/components/Profile.js
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
-import { Container, Row, Col, Card} from 'react-bootstrap';
+import { Container, Row, Col, Card } from 'react-bootstrap';
+import '../styles/Profile.css';
 
 const Profile = () => {
   const [profileData, setProfileData] = useState(null);
@@ -32,23 +32,21 @@ const Profile = () => {
   }
 
   return (
-    <Container className="mt-5">
-      <Row className="justify-content-center">
-        <Col md={8}>
-          <Card>
-            <Card.Header className="text-center">
-              <h2>Username :</h2>
-              <h3 className="mt-3">{profileData.username}</h3>
+    <Container fluid className="profile-page">
+      <Row>
+        <Col md={12}>
+          <h2 className="profile-title">Profile</h2>
+          <Card className="profile-card">
+            <Card.Header>
+              <h3>Username: {profileData.username}</h3>
             </Card.Header>
             <Card.Body>
-              <Col>
-                <Row >
-                  <p><strong>Email :</strong> {profileData.email}</p>
-                </Row>
-                <Row >
-                  <p><strong>Role :</strong> {profileData.role}</p>
-                </Row>
-              </Col>
+              <p>
+                <strong>Email:</strong> {profileData.email}
+              </p>
+              <p>
+                <strong>Role:</strong> {profileData.role}
+              </p>
             </Card.Body>
           </Card>
         </Col>

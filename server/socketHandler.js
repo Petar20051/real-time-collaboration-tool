@@ -1,5 +1,6 @@
-// socketHandler.js
 const { Server } = require('socket.io');
+
+const connectedUsers = {}; // Track users per room
 
 const socketHandler = (server) => {
   const io = new Server(server, {
@@ -11,28 +12,39 @@ const socketHandler = (server) => {
 
   io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`);
-
+  
     // Join a document room
-    socket.on('join-room', (roomId) => {
+    socket.on('join-room', ({ roomId, username }) => {
       socket.join(roomId);
-      console.log(`Socket ${socket.id} joined room ${roomId}`);
+      console.log(`${username} joined room ${roomId}`);
+  
+      // Update connected users
+      if (!connectedUsers[roomId]) {
+        connectedUsers[roomId] = [];
+      }
+      connectedUsers[roomId].push({ id: socket.id, username });
+  
+      // Notify all users in the room about the updated user list
+      io.to(roomId).emit('user-list', connectedUsers[roomId]);
     });
-
-    // Handle document text changes
-    socket.on('send-changes', (delta, roomId) => {
-      socket.to(roomId).emit('receive-changes', delta);
+  
+    // Handle leave room
+    socket.on('leave-room', (roomId) => {
+      connectedUsers[roomId] = connectedUsers[roomId].filter(
+        (user) => user.id !== socket.id
+      );
+      io.to(roomId).emit('user-list', connectedUsers[roomId]);
     });
-
-    // Handle chat messages (optional)
-    socket.on('message', (message) => {
-      // Broadcast the message to all sockets in the room(s) as needed
-      io.emit('message', message);
-    });
-
+  
     socket.on('disconnect', () => {
       console.log(`Socket disconnected: ${socket.id}`);
+      for (const roomId in connectedUsers) {
+        connectedUsers[roomId] = connectedUsers[roomId].filter(
+          (user) => user.id !== socket.id
+        );
+        io.to(roomId).emit('user-list', connectedUsers[roomId]);
+      }
     });
-  });
-};
-
+  });}
+  
 module.exports = socketHandler;

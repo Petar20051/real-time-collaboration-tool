@@ -1,7 +1,7 @@
 // src/components/Login.js
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../utils/api'; // Ensure this function returns an object with { token }
+import { login } from '../utils/api'; 
 import { AuthContext } from '../context/AuthContext';
 import '../styles/Auth.css';
 

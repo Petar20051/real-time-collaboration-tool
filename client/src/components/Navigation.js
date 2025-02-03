@@ -1,35 +1,35 @@
-// src/components/Navigation.js
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Navbar, Nav, Button } from 'react-bootstrap';
 import { AuthContext } from '../context/AuthContext';
+import '../styles/Navigation.css'; 
 
 const Navigation = () => {
   const { auth, logout } = useContext(AuthContext);
 
   return (
-    <Navbar bg="dark" variant="dark" expand="lg">
-      <Navbar.Brand as={Link} to="/">Real-Time Collaboration Tool</Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="me-auto">
+    <nav className="navbar">
+      <div className="navbar-container">
+        <div className="navbar-brand">
+          <Link to="/">Real-Time Collaboration Tool</Link>
+        </div>
+        <div className="navbar-links">
           {auth ? (
             <>
-              <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
-              <Nav.Link as={Link} to="/editor">Collaborative Editor</Nav.Link>
-              <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
-              <Nav.Link as={Link} to="/settings">Settings</Nav.Link>
-              <Button variant="outline-light" onClick={logout}>Logout</Button>
+              <Link to="/dashboard" className="nav-link">Dashboard</Link>
+              <Link to="/editor" className="nav-link">Collaborative Editor</Link>
+              <Link to="/profile" className="nav-link">Profile</Link>
+              <Link to="/settings" className="nav-link">Settings</Link>
+              <button className="logout-button" onClick={logout}>Logout</button>
             </>
           ) : (
             <>
-              <Nav.Link as={Link} to="/register">Register</Nav.Link>
-              <Nav.Link as={Link} to="/login">Login</Nav.Link>
+              <Link to="/register" className="nav-link">Register</Link>
+              <Link to="/login" className="nav-link">Login</Link>
             </>
           )}
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
+        </div>
+      </div>
+    </nav>
   );
 };
 

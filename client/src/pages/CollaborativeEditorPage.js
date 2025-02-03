@@ -1,65 +1,53 @@
-import React, { useState } from "react";
-import CollaborativeEditor from "../components/CollaborativeEditor";
-import Chat from "../components/Chat";
-import "../styles/CollaborativeEditorPage.css";
+import React, { useState } from 'react';
+import Chat from '../components/Chat';
+import ActiveUsers from '../components/ActiveUsers';
+import CollaborativeEditor from '../components/CollaborativeEditor';
+import '../styles/CollaborativeEditorPage.css';
 
 const CollaborativeEditorPage = () => {
-  const [roomId, setRoomId] = useState("");
+  const [roomId, setRoomId] = useState('');
   const [isRoomJoined, setIsRoomJoined] = useState(false);
 
   const handleJoinRoom = () => {
-    if (roomId.trim() === "") {
-      alert("Please enter a valid Room ID.");
-      return;
+    if (roomId.trim()) {
+      setIsRoomJoined(true);
     }
-    setIsRoomJoined(true);
   };
 
   const handleLeaveRoom = () => {
     setIsRoomJoined(false);
-    setRoomId("");
   };
 
   return (
-    <div className="collab-page">
-      <h1 className="page-title">Collaborative Editor</h1>
-
+    <div className="collaborative-editor-page">
       {!isRoomJoined ? (
         <div className="join-room-container">
+          <h1>Join a Room</h1>
           <input
             type="text"
-            placeholder="Enter Room ID"
             value={roomId}
             onChange={(e) => setRoomId(e.target.value)}
+            placeholder="Enter Room ID"
             className="room-input"
           />
-          <button className="join-room-btn" onClick={handleJoinRoom}>
+          <button onClick={handleJoinRoom} className="join-room-btn">
             Join Room
           </button>
         </div>
       ) : (
-        <div>
-          <div className="collab-container">
-            {/* Chat Sidebar */}
-            <div className="chat-sidebar">
-              <h3 className="chat-title">Room Chat</h3>
-              <div className="chat-body">
-                <Chat />
-              </div>
-            </div>
-
-            {/* Document Editor */}
-            <div className="editor-container">
-              <h3 className="editor-title">Document Editor</h3>
-              <CollaborativeEditor roomId={roomId} />
-            </div>
+        <div className="collab-layout">
+          <div className="sidebar">
+            <h2>Chat</h2>
+            <Chat roomId={roomId} />
+            <h2>Active Users</h2>
+            <ActiveUsers users={['User1', 'User2']} />
           </div>
-
-          {/* Leave Room Button */}
-          <div className="leave-room-container">
-            <button className="leave-room-btn" onClick={handleLeaveRoom}>
+          <div className="editor-container">
+            <h2>Collaborative Editor</h2>
+            <button onClick={handleLeaveRoom} className="leave-room-btn">
               Leave Room
             </button>
+            <CollaborativeEditor roomId={roomId} />
           </div>
         </div>
       )}

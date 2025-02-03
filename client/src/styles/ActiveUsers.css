@@ -1,0 +1,29 @@
+.active-users-container {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.active-users-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.active-users-list {
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.active-user {
+    font-size: 0.9rem;
+    padding: 5px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
