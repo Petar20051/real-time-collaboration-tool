@@ -1,22 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import Chat from '../components/Chat';
 import ActiveUsers from '../components/ActiveUsers';
 import CollaborativeEditor from '../components/CollaborativeEditor';
 import '../styles/CollaborativeEditorPage.css';
+import socket from '../socket';
 
 const CollaborativeEditorPage = () => {
   const [roomId, setRoomId] = useState('');
   const [isRoomJoined, setIsRoomJoined] = useState(false);
+  const [activeUsers, setActiveUsers] = useState([]);  // ✅ Store active users
+  const { auth } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (isRoomJoined) {
+      const token = localStorage.getItem('authToken');
+      socket.emit('join-room', { roomId, token });
+
+      // ✅ Listen for active user list updates
+      socket.on('user-list', (users) => {
+        setActiveUsers(users);
+      });
+
+      return () => {
+        socket.emit('leave-room', roomId);
+        socket.off('user-list');
+      };
+    }
+  }, [isRoomJoined, roomId]);
 
   const handleJoinRoom = () => {
-    if (roomId.trim()) {
-      setIsRoomJoined(true);
+    if (!roomId.trim()) {
+      alert('Please enter a valid Room ID');
+      return;
     }
+
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      alert('You must be logged in to join a room');
+      return;
+    }
+
+    setIsRoomJoined(true);
   };
 
   const handleLeaveRoom = () => {
+    socket.emit('leave-room', roomId);
+    setRoomId('');
     setIsRoomJoined(false);
   };
+
+  if (!auth?.token) {
+    return <h1>You must be logged in to access this page.</h1>;
+  }
 
   return (
     <div className="collaborative-editor-page">
@@ -40,13 +76,16 @@ const CollaborativeEditorPage = () => {
             <h2>Chat</h2>
             <Chat roomId={roomId} />
             <h2>Active Users</h2>
-            <ActiveUsers users={['User1', 'User2']} />
+            <ActiveUsers users={activeUsers} />  {/* ✅ Pass activeUsers */}
           </div>
+
           <div className="editor-container">
-            <h2>Collaborative Editor</h2>
-            <button onClick={handleLeaveRoom} className="leave-room-btn">
-              Leave Room
-            </button>
+            <div className="editor-header">
+              <h2>Collaborative Editor</h2>
+              <button onClick={handleLeaveRoom} className="leave-room-btn">
+                Leave Room
+              </button>
+            </div>
             <CollaborativeEditor roomId={roomId} />
           </div>
         </div>

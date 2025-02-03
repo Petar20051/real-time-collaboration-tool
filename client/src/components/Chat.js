@@ -7,19 +7,24 @@ const Chat = ({ roomId }) => {
   const [input, setInput] = useState('');
 
   useEffect(() => {
-    socket.on('message', (message) => {
+    // Listen for incoming messages
+    socket.on('receive-message', (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
     return () => {
-      socket.off('message');
+      socket.off('receive-message');
     };
   }, []);
 
   const sendMessage = () => {
     if (input.trim()) {
-      socket.emit('message', { roomId, content: input });
-      setMessages((prevMessages) => [...prevMessages, { content: input }]);
+      const message = { roomId, content: input }; // Prepare the message
+
+      // Emit the message to the server
+      socket.emit('send-message', message);
+
+      // Clear the input without appending it to local messages
       setInput('');
     }
   };
@@ -29,7 +34,9 @@ const Chat = ({ roomId }) => {
       <h3 className="chat-title">Room Chat</h3>
       <div className="chat-body">
         {messages.map((msg, index) => (
-          <p key={index} className="chat-message">{msg.content}</p>
+          <p key={index} className="chat-message">
+            <strong>{msg.username === socket.id ? 'Me' : msg.username}:</strong> {msg.content}
+          </p>
         ))}
       </div>
       <div className="chat-input-container">

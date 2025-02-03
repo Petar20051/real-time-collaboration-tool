@@ -7,7 +7,7 @@ const ActiveUsers = ({ users }) => {
       <h3 className="active-users-title">Active Users</h3>
       <div className="active-users-list">
         {users.map((user, index) => (
-          <p key={index} className="active-user">{user}</p>
+          <p key={index} className="active-user">{user.username}</p> 
         ))}
       </div>
     </div>
