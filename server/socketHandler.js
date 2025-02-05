@@ -100,7 +100,30 @@ const socketHandler = (server) => {
       socket.leave(roomId);
       console.log(`🚪 User ${socket.id} left room ${roomId}`);
     });
+      
 
+    socket.on('sync-offline-changes', async ({ roomId, changes }) => {
+      if (!roomId || !changes.length) return;
+    
+      try {
+        const existingDocument = await Document.findOne({ roomId });
+        if (!existingDocument) return;
+    
+        // Apply changes to the document
+        changes.forEach(delta => {
+          existingDocument.content.ops.push(...delta.ops);
+        });
+    
+        await existingDocument.save();
+        console.log(`✅ Offline changes synced for room ${roomId}`);
+    
+        // Send updated document to all users
+        io.to(roomId).emit('receive-changes', changes);
+      } catch (error) {
+        console.error('❌ Error syncing offline changes:', error.message);
+      }
+    });
+    
     // ✅ Handle Disconnect (Cleanup Users)
     socket.on('disconnect', () => {
       console.log(`🚪 User disconnected: ${socket.id}`);

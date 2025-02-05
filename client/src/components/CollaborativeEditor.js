@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import '../styles/CollaborativeEditor.css';
@@ -9,7 +9,9 @@ const CollaborativeEditor = ({ roomId }) => {
   const editorRef = useRef(null);
   const quillRef = useRef(null);
   const [editingUsers, setEditingUsers] = useState([]);
-  const editTimeouts = useRef({}); // Store user stop editing timeouts
+  const editTimeouts = useRef({});
+  const [isOffline, setIsOffline] = useState(false);
+  const [pendingChanges, setPendingChanges] = useState([]);
 
   useEffect(() => {
     if (!roomId) {
@@ -29,7 +31,6 @@ const CollaborativeEditor = ({ roomId }) => {
         },
       });
 
-      // **Detect user typing and trigger "user-start-editing"**
       quillRef.current.on('text-change', async () => {
         const content = quillRef.current.getContents();
         const username = localStorage.getItem('username');
@@ -37,6 +38,11 @@ const CollaborativeEditor = ({ roomId }) => {
 
         if (!token) {
           console.error('❌ No authentication token found.');
+          return;
+        }
+
+        if (isOffline) {
+          setPendingChanges((prev) => [...prev, content]);
           return;
         }
 
@@ -49,15 +55,12 @@ const CollaborativeEditor = ({ roomId }) => {
 
           socket.emit('document-updated', { roomId, content });
 
-          // **Trigger user-start-editing event**
           socket.emit('user-start-editing', { roomId, username });
 
-          // **Reset timeout before removing user**
           if (editTimeouts.current[username]) {
             clearTimeout(editTimeouts.current[username]);
           }
 
-          // **Trigger user-stop-editing event after 5 seconds of inactivity**
           editTimeouts.current[username] = setTimeout(() => {
             socket.emit('user-stop-editing', { roomId, username });
           }, 5000);
@@ -66,18 +69,15 @@ const CollaborativeEditor = ({ roomId }) => {
         }
       });
 
-      // **Receive document updates**
       socket.on('document-updated', (content) => {
         quillRef.current.setContents(content);
       });
 
-      // **Listen for editing users updates**
       socket.on('editing-users', (users) => {
         setEditingUsers(users);
       });
     }
 
-    // **Load document on first render**
     const loadDocument = async () => {
       try {
         const token = localStorage.getItem('authToken');
@@ -106,10 +106,41 @@ const CollaborativeEditor = ({ roomId }) => {
       socket.off('document-updated');
       socket.off('editing-users');
     };
-  }, [roomId]);
+  }, [roomId, isOffline]); // ✅ Added `isOffline` to dependency array
+
+  // **Sync Offline Changes (Now Memoized with `useCallback`)**
+  const syncOfflineChanges = useCallback(() => {
+    if (pendingChanges.length > 0) {
+      pendingChanges.forEach((content) => {
+        socket.emit('document-updated', { roomId, content });
+      });
+      setPendingChanges([]); // Clear stored changes
+    }
+  }, [roomId, pendingChanges]);
+
+  // **Handle Offline & Online Mode**
+  useEffect(() => {
+    const handleOffline = () => {
+      setIsOffline(true);
+    };
+
+    const handleOnline = () => {
+      setIsOffline(false);
+      syncOfflineChanges();
+    };
+
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('online', handleOnline);
+
+    return () => {
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('online', handleOnline);
+    };
+  }, [syncOfflineChanges]); // ✅ Added `syncOfflineChanges` to dependency array
 
   return (
     <div className="editor-container">
+      {isOffline && <p className="offline-warning">⚠️ You are offline. Changes will sync when you reconnect.</p>}
       <div ref={editorRef} className="editor"></div>
       <div className="editing-users">
         <h4>Currently Editing:</h4>
