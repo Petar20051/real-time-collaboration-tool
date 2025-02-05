@@ -1,0 +1,35 @@
+.file-upload-container {
+    margin: 20px 0;
+  }
+  
+  .file-upload-controls {
+    margin-bottom: 15px;
+  }
+  
+  .upload-button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .upload-button:hover {
+    background-color: #218838;
+  }
+  
+  .shared-files {
+    margin-top: 15px;
+  }
+  
+  .shared-files ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .shared-files li {
+    margin-bottom: 5px;
+  }
+  

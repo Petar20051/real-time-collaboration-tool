@@ -1,20 +1,18 @@
-// routes/documentRoutes.js
 const express = require('express');
 const Document = require('../models/Document');
 const { authenticateToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// Protect all routes below
 router.use(authenticateToken);
 
-// GET a document by roomId (creates a new one if it doesn’t exist)
+// ✅ Fetch or Create Document
 router.get('/:roomId', async (req, res) => {
   const { roomId } = req.params;
   try {
     let document = await Document.findOne({ roomId });
     if (!document) {
-      document = await Document.create({ roomId, content: {} });
+      document = await Document.create({ roomId, content: { ops: [] } });
     }
     res.status(200).json(document);
   } catch (error) {
@@ -22,7 +20,7 @@ router.get('/:roomId', async (req, res) => {
   }
 });
 
-// POST updated document content
+// ✅ Save Document on Every Change
 router.post('/:roomId', async (req, res) => {
   const { roomId } = req.params;
   const { content } = req.body;
@@ -32,6 +30,7 @@ router.post('/:roomId', async (req, res) => {
       { content },
       { new: true, upsert: true }
     );
+
     res.status(200).json(document);
   } catch (error) {
     res.status(500).json({ message: 'Error saving document' });

@@ -9,6 +9,7 @@ const authRoutes = require('./routes/authRoutes');
 const socketHandler = require('./socketHandler');
 const documentRoutes = require('./routes/documentRoutes');
 const userRoutes = require('./routes/userRoutes');
+const fileRoutes = require('./routes/fileRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -24,6 +25,14 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/user',userRoutes);
+app.use('/api/files', fileRoutes);
+
+const path = require('path');
+
+// ✅ Serve static files (public access)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 
 // Placeholder route for future API endpoints
 app.get('/api', (req, res) => {
