@@ -38,6 +38,20 @@ const socketHandler = (server) => {
         console.error('❌ Error updating document:', error.message);
       }
     });
+    setInterval(async () => {
+      for (const roomId in connectedUsers) {
+        try {
+          const document = await Document.findOne({ roomId });
+          if (!document) continue;
+
+          document.versions.push({ content: document.content });
+          await document.save();
+          console.log(`✅ Auto-saved version for room ${roomId}`);
+        } catch (error) {
+          console.error(`❌ Error auto-saving version for room ${roomId}:`, error.message);
+        }
+      }
+    }, 300000); 
 
     socket.on('user-start-editing', ({ roomId, username }) => {
       if (!roomId || !username) return;
@@ -146,4 +160,4 @@ const socketHandler = (server) => {
   });
 };
 
-module.exports = socketHandler;
+module.exports = socketHandler; 

@@ -12,6 +12,10 @@ const CollaborativeEditor = ({ roomId }) => {
   const editTimeouts = useRef({});
   const [isOffline, setIsOffline] = useState(false);
   const [pendingChanges, setPendingChanges] = useState([]);
+  const [versions, setVersions] = useState([]);
+  const [selectedVersion, setSelectedVersion] = useState(null);
+  const [versionName, setVersionName] = useState(''); 
+  const currentDocument = useRef(null);
 
   useEffect(() => {
     if (!roomId) {
@@ -64,6 +68,8 @@ const CollaborativeEditor = ({ roomId }) => {
           editTimeouts.current[username] = setTimeout(() => {
             socket.emit('user-stop-editing', { roomId, username });
           }, 5000);
+
+          currentDocument.current = content;
         } catch (error) {
           console.error('❌ Error saving document:', error.response?.data || error.message);
         }
@@ -71,6 +77,7 @@ const CollaborativeEditor = ({ roomId }) => {
 
       socket.on('document-updated', (content) => {
         quillRef.current.setContents(content);
+        currentDocument.current = content;
       });
 
       socket.on('editing-users', (users) => {
@@ -93,6 +100,7 @@ const CollaborativeEditor = ({ roomId }) => {
 
         if (response.data?.content) {
           quillRef.current.setContents(response.data.content);
+          currentDocument.current = response.data.content;
           console.log('✅ Document loaded successfully.');
         }
       } catch (error) {
@@ -100,25 +108,75 @@ const CollaborativeEditor = ({ roomId }) => {
       }
     };
 
+    const loadVersions = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
+
+        const response = await axios.get(
+          `http://localhost:4000/api/documents/${roomId}/versions`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        setVersions(response.data.reverse());
+      } catch (error) {
+        console.error('❌ Error fetching versions:', error.response?.data || error.message);
+      }
+    };
+
     loadDocument();
+    loadVersions();
 
     return () => {
       socket.off('document-updated');
       socket.off('editing-users');
     };
-  }, [roomId, isOffline]); // ✅ Added `isOffline` to dependency array
+  }, [roomId, isOffline]);
 
-  // **Sync Offline Changes (Now Memoized with `useCallback`)**
+  const saveNewVersion = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) return;
+  
+      const content = quillRef.current.getContents();
+      const trimmedVersionName = versionName.trim();
+      const finalVersionName = trimmedVersionName || `Version ${versions.length + 1}`;
+  
+      await axios.post(
+        `http://localhost:4000/api/documents/${roomId}/save-version`,
+        { content, name: finalVersionName }, // ✅ Always sending a valid name
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      alert('✅ Version saved successfully!');
+      setVersionName('');
+  
+      const response = await axios.get(
+        `http://localhost:4000/api/documents/${roomId}/versions`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      setVersions(response.data.reverse());
+    } catch (error) {
+      console.error('❌ Error saving version:', error.response?.data || error.message);
+    }
+  };
+  
+  const restoreVersion = () => {
+    if (selectedVersion) {
+      quillRef.current.setContents(selectedVersion.content);
+    }
+  };
+
   const syncOfflineChanges = useCallback(() => {
     if (pendingChanges.length > 0) {
       pendingChanges.forEach((content) => {
         socket.emit('document-updated', { roomId, content });
       });
-      setPendingChanges([]); // Clear stored changes
+      setPendingChanges([]);
     }
   }, [roomId, pendingChanges]);
 
-  // **Handle Offline & Online Mode**
   useEffect(() => {
     const handleOffline = () => {
       setIsOffline(true);
@@ -136,12 +194,39 @@ const CollaborativeEditor = ({ roomId }) => {
       window.removeEventListener('offline', handleOffline);
       window.removeEventListener('online', handleOnline);
     };
-  }, [syncOfflineChanges]); // ✅ Added `syncOfflineChanges` to dependency array
+  }, [syncOfflineChanges]);
 
   return (
     <div className="editor-container">
       {isOffline && <p className="offline-warning">⚠️ You are offline. Changes will sync when you reconnect.</p>}
+
       <div ref={editorRef} className="editor"></div>
+
+      <div className="editor-footer">
+        <input
+          type="text"
+          placeholder="Version Name"
+          value={versionName}
+          onChange={(e) => setVersionName(e.target.value)}
+        />
+        <button onClick={saveNewVersion} className="save-version-btn">
+          Save Version
+        </button>
+
+        <h4>Document Version History</h4>
+        <select onChange={(e) => setSelectedVersion(JSON.parse(e.target.value))}>
+          <option value="" disabled selected hidden >Select a version</option>
+          {versions.map((version, index) => (
+            <option key={index} value={JSON.stringify(version)}>
+              {version.name} - {new Date(version.timestamp).toLocaleString()}
+            </option>
+          ))}
+        </select>
+        <button onClick={restoreVersion} disabled={!selectedVersion}>
+          Restore Version
+        </button>
+      </div>
+
       <div className="editing-users">
         <h4>Currently Editing:</h4>
         {editingUsers.length > 0 ? (
