@@ -2,6 +2,7 @@ const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
 const Document = require('./models/Document');
 const User = require('./models/User');
+const Comment = require('./models/Comment');
 
 const connectedUsers = {};
 const chatMessages = {}; 
@@ -29,6 +30,66 @@ const socketHandler = (server) => {
         socket.emit('error', 'Invalid token.');
       }
     });
+
+
+    socket.on('add-comment', async ({ roomId, content, token }) => {
+      if (!content) return;
+    
+      try {
+        // ✅ Verify JWT to authenticate user
+        const { id: userId } = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(userId);
+        if (!user) return socket.emit('error', 'User not found.');
+    
+        // ✅ Save comment in MongoDB
+        const newComment = new Comment({ roomId, userId, username: user.username, content });
+        await newComment.save();
+    
+        // ✅ Broadcast comment to all users in the room
+        io.to(roomId).emit('new-comment', newComment);
+      } catch (error) {
+        console.error('❌ Error adding comment:', error.message);
+        socket.emit('error', 'Failed to add comment.');
+      }
+    });
+    
+
+    // ✅ Handle Comment Deletion
+    socket.on('delete-comment', async ({ commentId, token }) => {
+      try {
+        if (!token) {
+          console.error('❌ Unauthorized: No token provided.');
+          return socket.emit('error', 'Unauthorized');
+        }
+    
+        // ✅ Verify token to get userId
+        const { id: userId } = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(userId);
+        if (!user) {
+          return socket.emit('error', 'User not found');
+        }
+    
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+          return socket.emit('error', 'Comment not found');
+        }
+    
+        // ✅ Only allow comment author to delete
+        if (comment.userId.toString() !== userId) {
+          return socket.emit('error', 'Unauthorized to delete this comment');
+        }
+    
+        await comment.deleteOne();
+        
+        // ✅ Emit event to all users in the room
+        io.to(comment.roomId).emit('comment-deleted', commentId);
+        console.log(`✅ Comment deleted: ${commentId}`);
+      } catch (error) {
+        console.error('❌ Error deleting comment:', error.message);
+        socket.emit('error', 'Error deleting comment');
+      }
+    });
+    
 
     socket.on('document-updated', async ({ roomId, content }) => {
       try {

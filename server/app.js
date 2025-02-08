@@ -10,6 +10,7 @@ const socketHandler = require('./socketHandler');
 const documentRoutes = require('./routes/documentRoutes');
 const userRoutes = require('./routes/userRoutes');
 const fileRoutes = require('./routes/fileRoutes');
+const commentRoutes=require('./routes/commentRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -21,11 +22,14 @@ connectDB();
 app.use(cors({ origin: 'http://localhost:3000' })); // Adjust the origin as needed
 app.use(express.json());
 
+
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/user',userRoutes);
 app.use('/api/files', fileRoutes);
+app.use('/api/comments', commentRoutes);
 
 const path = require('path');
 

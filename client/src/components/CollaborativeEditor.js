@@ -14,7 +14,10 @@ const CollaborativeEditor = ({ roomId }) => {
   const [pendingChanges, setPendingChanges] = useState([]);
   const [versions, setVersions] = useState([]);
   const [selectedVersion, setSelectedVersion] = useState(null);
-  const [versionName, setVersionName] = useState(''); 
+  const [versionName, setVersionName] = useState('');
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState('');
+   
   const currentDocument = useRef(null);
 
   useEffect(() => {
@@ -84,6 +87,8 @@ const CollaborativeEditor = ({ roomId }) => {
         setEditingUsers(users);
       });
     }
+    
+    
 
     const loadDocument = async () => {
       try {
@@ -108,6 +113,7 @@ const CollaborativeEditor = ({ roomId }) => {
       }
     };
 
+
     const loadVersions = async () => {
       try {
         const token = localStorage.getItem('authToken');
@@ -124,12 +130,34 @@ const CollaborativeEditor = ({ roomId }) => {
       }
     };
 
+    const loadComments = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
+
+        const response = await axios.get(
+          `http://localhost:4000/api/comments/${roomId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        setComments(response.data);
+      } catch (error) {
+        console.error('❌ Error fetching comments:', error.response?.data || error.message);
+      }
+    };
+
     loadDocument();
     loadVersions();
+    loadComments();
+
+    socket.on('new-comment', (comment) => {
+      setComments((prevComments) => [...prevComments, comment]);
+    });
 
     return () => {
       socket.off('document-updated');
       socket.off('editing-users');
+      socket.off('new-comment');
     };
   }, [roomId, isOffline]);
 
@@ -162,6 +190,25 @@ const CollaborativeEditor = ({ roomId }) => {
     }
   };
   
+  const postComment = async () => {
+    if (!newComment.trim()) return;
+  
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        console.error('❌ No authentication token found.');
+        return;
+      }
+  
+      socket.emit('add-comment', { roomId, content: newComment, token });
+      setNewComment(''); // ✅ Clear input after sending
+
+    } catch (error) {
+      console.error('❌ Error posting comment:', error.response?.data || error.message);
+    }
+  };
+  
+
   const restoreVersion = () => {
     if (selectedVersion) {
       quillRef.current.setContents(selectedVersion.content);
@@ -196,6 +243,38 @@ const CollaborativeEditor = ({ roomId }) => {
     };
   }, [syncOfflineChanges]);
 
+  useEffect(() => {
+    const handleCommentDeleted = (deletedCommentId) => {
+      setComments((prevComments) => prevComments.filter(comment => comment._id !== deletedCommentId));
+    };
+  
+    socket.on('comment-deleted', handleCommentDeleted);
+  
+    return () => {
+      socket.off('comment-deleted', handleCommentDeleted); // ✅ Ensures cleanup
+    };
+  }, []);
+  
+
+  const deleteComment = useCallback((commentId) => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error('❌ No authentication token found.');
+      return;
+    }
+  
+    if (!commentId) {
+      console.error('❌ Invalid comment ID.');
+      return;
+    }
+  
+    // ✅ Now sending token properly
+    socket.emit('delete-comment', { commentId, token });
+  }, []);
+  
+  
+  
+
   return (
     <div className="editor-container">
       {isOffline && <p className="offline-warning">⚠️ You are offline. Changes will sync when you reconnect.</p>}
@@ -226,6 +305,27 @@ const CollaborativeEditor = ({ roomId }) => {
           Restore Version
         </button>
       </div>
+       
+      <div className="comment-section">
+      <h4>Comments</h4>
+      <ul>
+  {comments.map((comment) => (
+    <li key={comment._id}>
+      {comment.content}
+      <button onClick={() => deleteComment(comment._id)} className="delete-btn">❌</button> 
+    </li>
+  ))}
+</ul>
+
+    <input
+      type="text"
+      placeholder="Add a comment"
+      value={newComment}
+      onChange={(e) => setNewComment(e.target.value)}
+    />
+    <button onClick={postComment}>Post</button>
+      </div>
+
 
       <div className="editing-users">
         <h4>Currently Editing:</h4>
