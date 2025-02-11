@@ -1,13 +1,13 @@
 const express = require('express');
 const multer = require('multer');
-const File = require('../models/File'); // Import the File model
+const File = require('../models/File'); 
 const router = express.Router();
 const path = require('path');
 
-// Multer storage configuration
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../uploads')); // Ensure correct path
+    cb(null, path.join(__dirname, '../uploads')); 
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + '-' + file.originalname);
@@ -16,10 +16,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// ✅ Serve static files
+
 router.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// 📌 Upload a file
+
 router.post('/:roomId', upload.single('file'), async (req, res) => {
   const { roomId } = req.params;
   const { file } = req;
@@ -32,7 +32,7 @@ router.post('/:roomId', upload.single('file'), async (req, res) => {
     const newFile = await File.create({
       roomId,
       fileName: file.originalname,
-      filePath: `/uploads/${file.filename}`, // Store relative path
+      filePath: `/uploads/${file.filename}`, 
       uploadedBy: req.user?.id || 'Anonymous',
     });
 
@@ -43,7 +43,7 @@ router.post('/:roomId', upload.single('file'), async (req, res) => {
   }
 });
 
-// 📌 Fetch files for a room
+
 router.get('/:roomId', async (req, res) => {
   const { roomId } = req.params;
 
@@ -71,10 +71,10 @@ router.get('/download/:fileId', async (req, res) => {
         return res.status(404).json({ error: 'File not found' });
       }
   
-      // ✅ Get absolute file path
+      
       const filePath = path.join(__dirname, '..', file.filePath);
   
-      // ✅ Force browser to download file
+      
       res.download(filePath, file.fileName, (err) => {
         if (err) {
           console.error('❌ Error downloading file:', err.message);

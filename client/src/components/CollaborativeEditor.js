@@ -172,7 +172,7 @@ const CollaborativeEditor = ({ roomId }) => {
   
       await axios.post(
         `http://localhost:4000/api/documents/${roomId}/save-version`,
-        { content, name: finalVersionName }, // ✅ Always sending a valid name
+        { content, name: finalVersionName }, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
   

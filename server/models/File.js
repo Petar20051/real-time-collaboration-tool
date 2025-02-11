@@ -3,23 +3,23 @@ const mongoose = require('mongoose');
 const fileSchema = new mongoose.Schema({
   roomId: {
     type: String,
-    required: true, // Associates the file with a specific room
+    required: true, 
   },
   fileName: {
     type: String,
-    required: true, // Name of the file
+    required: true, 
   },
   filePath: {
     type: String,
-    required: true, // Path where the file is stored
+    required: true, 
   },
   uploadedBy: {
-    type: String, // Optional: User ID or username
+    type: String, 
     required: false,
   },
   uploadedAt: {
     type: Date,
-    default: Date.now, // Timestamp for when the file was uploaded
+    default: Date.now, 
   },
 });
 

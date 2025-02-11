@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.use(authenticateToken);
 
-// Fetch or Create Document
+
 router.get('/:roomId', async (req, res) => {
   const { roomId } = req.params;
   try {
@@ -20,7 +20,7 @@ router.get('/:roomId', async (req, res) => {
   }
 });
 
-// Save Document on Every Change
+
 router.post('/:roomId', async (req, res) => {
   const { roomId } = req.params;
   const { content } = req.body;
@@ -49,7 +49,7 @@ router.post('/:roomId/save-version', async (req, res) => {
       return res.status(404).json({ message: 'Document not found' });
     }
 
-    // ✅ Provide a default name if none is given
+    
     const versionName = name?.trim() || `Version ${document.versions.length + 1}`;
 
     if (!versionName) {
@@ -60,7 +60,7 @@ router.post('/:roomId/save-version', async (req, res) => {
     document.versions.push({ 
       name: versionName, 
       content, 
-      timestamp: new Date()  // Ensure timestamp is included
+      timestamp: new Date()  
     });
 
     await document.save();
@@ -74,7 +74,7 @@ router.post('/:roomId/save-version', async (req, res) => {
   }
 });
 
-// Fetch All Versions of a Document
+
 router.get('/:roomId/versions', async (req, res) => {
   const { roomId } = req.params;
 
@@ -91,5 +91,60 @@ router.get('/:roomId/versions', async (req, res) => {
     res.status(500).json({ message: 'Error fetching versions' });
   }
 });
+
+router.post('/:roomId/set-password', authenticateToken, async (req, res) => {
+  const { roomId } = req.params;
+  const { password } = req.body;
+  const userId = req.user.id;
+
+  let document = await Document.findOne({ roomId });
+
+  if (!document) return res.status(404).json({ message: 'Document not found' });
+  if (document.passwordHash) return res.status(403).json({ message: 'Document already has a password' });
+
+  await document.setPassword(password, userId);
+  await document.save();
+
+  res.json({ message: 'Password set. Document is now private', role: 'owner' });
+});
+
+
+router.post('/enter-room', async (req, res) => {
+  const { roomId, password } = req.body;
+
+  let document = await Document.findOne({ roomId });
+
+  if (!document) return res.status(404).json({ message: 'Document not found' });
+
+  if (!document.passwordHash) {
+    return res.json({ message: 'Room is public', access: true });
+  }
+
+  const isValid = await document.validatePassword(password);
+  if (!isValid) {
+    return res.status(403).json({ message: 'Incorrect password' });
+  }
+
+  res.json({ message: 'Access granted', access: true });
+});
+
+
+router.post('/:roomId/remove-password', authenticateToken, async (req, res) => {
+  const { roomId } = req.params;
+  const userId = req.user.id;
+
+  let document = await Document.findOne({ roomId });
+
+  if (!document) return res.status(404).json({ message: 'Document not found' });
+  if (document.ownerId.toString() !== userId) return res.status(403).json({ message: 'Not authorized' });
+
+  document.passwordHash = null;
+  document.isPrivate = false;
+  document.ownerId =null;
+  await document.save();
+
+  res.json({ message: 'Document is now public' });
+});
+
 
 module.exports = router;

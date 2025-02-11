@@ -3,12 +3,15 @@ import { AuthContext } from '../context/AuthContext';
 import Chat from '../components/Chat';
 import ActiveUsers from '../components/ActiveUsers';
 import CollaborativeEditor from '../components/CollaborativeEditor';
-import FileUpload from '../components/FileUpload'; // ✅ Import FileUpload component
+import FileUpload from '../components/FileUpload';
 import '../styles/CollaborativeEditorPage.css';
+import axios from 'axios';
 import socket from '../socket';
 
 const CollaborativeEditorPage = () => {
   const [roomId, setRoomId] = useState('');
+  const [password, setPassword] = useState('');
+  const [requiresPassword, setRequiresPassword] = useState(false);
   const [isRoomJoined, setIsRoomJoined] = useState(false);
   const { auth } = useContext(AuthContext);
   const [activeUsers, setActiveUsers] = useState([]);
@@ -18,19 +21,36 @@ const CollaborativeEditorPage = () => {
       const token = localStorage.getItem('authToken');
       socket.emit('join-room', { roomId, token });
 
-      // ✅ Listen for active users list from server
       socket.on('user-list', (users) => {
         setActiveUsers(users);
       });
 
       return () => {
         socket.emit('leave-room', roomId);
-        socket.off('user-list'); // ✅ Remove event listener when leaving room
+        socket.off('user-list');
       };
     }
   }, [isRoomJoined, roomId]);
 
-  const handleJoinRoom = () => {
+  const checkRoomPassword = async () => {
+    if (!roomId.trim()) {
+      alert('Please enter a valid Room ID');
+      return;
+    }
+
+    try {
+      const response = await axios.get(`http://localhost:4000/api/documents/${roomId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+      });
+
+      setRequiresPassword(response.data.requiresPassword);
+    } catch (error) {
+      console.error('❌ Error checking room:', error.response?.data || error.message);
+    }
+  };
+
+  
+  const handleJoinRoom = async () => {
     if (!roomId.trim()) {
       alert('Please enter a valid Room ID');
       return;
@@ -42,14 +62,69 @@ const CollaborativeEditorPage = () => {
       return;
     }
 
+    if (requiresPassword) {
+      try {
+        const response = await axios.post(
+          `http://localhost:4000/api/documents/${roomId}/check-password`,
+          { password },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (!response.data.correct) {
+          alert('Incorrect password!');
+          return;
+        }
+      } catch (error) {
+        console.error('❌ Error verifying password:', error.response?.data || error.message);
+        return;
+      }
+    }
+
     setIsRoomJoined(true);
+  };
+
+  
+  const handleSetPassword = async () => {
+    if (!password.trim()) {
+      alert('Please enter a password');
+      return;
+    }
+
+    try {
+      await axios.post(
+        `http://localhost:4000/api/documents/${roomId}/set-password`,
+        { password },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
+      );
+
+      alert('✅ Password set successfully!');
+      setRequiresPassword(true);
+    } catch (error) {
+      console.error('❌ Error setting password:', error.response?.data || error.message);
+    }
+  };
+
+  const handleRemovePassword = async () => {
+    try {
+      await axios.post(
+        `http://localhost:4000/api/documents/${roomId}/remove-password`,
+        {},
+        { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
+      );
+
+      alert('✅ Password removed!');
+      setRequiresPassword(false);
+    } catch (error) {
+      console.error('❌ Error removing password:', error.response?.data || error.message);
+    }
   };
 
   const handleLeaveRoom = () => {
     socket.emit('leave-room', roomId);
     setRoomId('');
+    setPassword('');
     setIsRoomJoined(false);
-    setActiveUsers([]); // ✅ Clear active users when leaving the room
+    setActiveUsers([]);
   };
 
   if (!auth?.token) {
@@ -67,10 +142,28 @@ const CollaborativeEditorPage = () => {
             onChange={(e) => setRoomId(e.target.value)}
             placeholder="Enter Room ID"
             className="room-input"
+            onBlur={checkRoomPassword}
           />
+
+          {requiresPassword && (
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter Room Password"
+              className="room-input"
+            />
+          )}
+
           <button onClick={handleJoinRoom} className="join-room-btn">
             Join Room
           </button>
+
+          {!requiresPassword && (
+            <button onClick={handleSetPassword} className="set-password-btn">
+              Set Password (Become Owner)
+            </button>
+          )}
         </div>
       ) : (
         <div className="collab-layout">
@@ -79,7 +172,7 @@ const CollaborativeEditorPage = () => {
             <Chat roomId={roomId} />
             <h2>Active Users</h2>
             <ActiveUsers users={activeUsers} />
-            <FileUpload roomId={roomId} /> 
+            <FileUpload roomId={roomId} />
           </div>
 
           <div className="editor-container">
@@ -88,6 +181,11 @@ const CollaborativeEditorPage = () => {
               <button onClick={handleLeaveRoom} className="leave-room-btn">
                 Leave Room
               </button>
+              {requiresPassword && (
+                <button onClick={handleRemovePassword} className="remove-password-btn">
+                  Remove Password
+                </button>
+              )}
             </div>
             <CollaborativeEditor roomId={roomId} />
           </div>

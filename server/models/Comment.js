@@ -3,27 +3,27 @@ const mongoose = require('mongoose');
 const CommentSchema = new mongoose.Schema({
   roomId: {
     type: String,
-    required: true, // Links comment to a specific document
+    required: true, 
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true, // Links to the user who wrote the comment
+    required: true, 
   },
   username: {
     type: String,
-    required: true, // Store username for display
+    required: true, 
   },
   content: {
     type: String,
-    required: true, // Comment text
+    required: true, 
   },
   position: {
-    type: Number, // Optional: If we want to link to a specific position in the document
+    type: Number, 
   },
   timestamp: {
     type: Date,
-    default: Date.now, // When the comment was made
+    default: Date.now, 
   },
 });
 

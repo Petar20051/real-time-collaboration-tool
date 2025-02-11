@@ -1,32 +1,31 @@
-/* Global Reset */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body Styling */
 body {
-  font-family: 'Roboto', Arial, sans-serif; /* Modern and clean font */
-  background-color: #eef2f7; /* Soft background */
+  font-family: 'Roboto', Arial, sans-serif; 
+  background-color: #eef2f7; 
   margin: 0;
   padding: 0;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Align content towards the top */
+  align-items: flex-start; 
   min-height: 100vh;
-  padding-top: 50px; /* Add spacing from the top */
+  padding-top: 50px; 
 }
 
-/* Container Styling */
+
 .container {
   background: #ffffff;
-  border-radius: 12px; /* Rounded corners */
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
+  border-radius: 12px; 
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); 
   padding: 30px;
   width: 100%;
-  max-width: 500px; /* Slightly larger container width */
-  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effects */
+  max-width: 500px; 
+  transition: transform 0.2s ease, box-shadow 0.2s ease; 
 }
 
 .container:hover {

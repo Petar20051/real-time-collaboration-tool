@@ -1,13 +1,13 @@
-// routes/userRoutes.js
+
 const express = require('express');
 const { authenticateToken } = require('../middleware/authMiddleware');
 const User = require('../models/User');
 const router = express.Router();
 
-// Get user profile
+
 router.get('/profile', authenticateToken, async (req, res) => {
   try {
-    // req.user.id should be available from the token payload
+    
     const user = await User.findById(req.user.id).select('-password');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -19,7 +19,7 @@ router.get('/profile', authenticateToken, async (req, res) => {
   }
 });
 
-// Update user profile
+
 router.put('/profile', authenticateToken, async (req, res) => {
   const { username, email, password } = req.body;
   try {
@@ -30,7 +30,7 @@ router.put('/profile', authenticateToken, async (req, res) => {
 
     if (username) user.username = username;
     if (email) user.email = email;
-    if (password) user.password = password; // Consider hashing if not handled in the model
+    if (password) user.password = password; 
 
     await user.save();
     res.json({ message: 'Profile updated successfully' });

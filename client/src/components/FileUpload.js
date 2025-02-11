@@ -5,9 +5,9 @@ import '../styles/FileUpload.css';
 const FileUpload = ({ roomId }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [sharedFiles, setSharedFiles] = useState([]);
-  const token = localStorage.getItem('authToken'); // Retrieve token from localStorage
+  const token = localStorage.getItem('authToken'); 
 
-  // ✅ Fetch shared files
+ 
   const fetchSharedFiles = useCallback(async () => {
     if (!roomId) return;
     
@@ -25,7 +25,7 @@ const FileUpload = ({ roomId }) => {
 
   useEffect(() => {
     fetchSharedFiles();
-  }, [fetchSharedFiles]); // ✅ Now includes the function as a dependency
+  }, [fetchSharedFiles]); 
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -47,7 +47,7 @@ const FileUpload = ({ roomId }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert('✅ File uploaded successfully!');
-      fetchSharedFiles(); // ✅ Refresh the shared files list after upload
+      fetchSharedFiles(); 
       setSelectedFile(null);
     } catch (error) {
       console.error('❌ Error uploading file:', error.response?.data || error.message);

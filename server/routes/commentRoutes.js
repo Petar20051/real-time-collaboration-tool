@@ -5,11 +5,11 @@ const { authenticateToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// ✅ Fetch Comments for a Room
+
 router.get('/:roomId', authenticateToken, async (req, res) => {
   try {
     const { roomId } = req.params;
-    const comments = await Comment.find({ roomId }).sort({ timestamp: 1 }); // Sort by oldest first
+    const comments = await Comment.find({ roomId }).sort({ timestamp: 1 }); 
     res.status(200).json(comments);
   } catch (error) {
     console.error('❌ Error fetching comments:', error.message);
@@ -21,25 +21,25 @@ router.post('/:roomId', authenticateToken, async (req, res) => {
   try {
     const { roomId } = req.params;
     const { content, position } = req.body;
-    const userId = req.user.id; // ✅ Extract userId from token
+    const userId = req.user.id; 
 
     if (!content) {
       return res.status(400).json({ message: 'Comment cannot be empty' });
     }
 
-    // ✅ Fetch username from the database
+    
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
     
-    const username = user.username; // ✅ Get username from DB
+    const username = user.username; 
 
-    // ✅ Create the new comment
+   
     const newComment = new Comment({ roomId, userId, username, content, position });
     await newComment.save();
 
-    // ✅ Emit real-time update
+   
     req.io.to(roomId).emit('comment-added', newComment);
 
     res.status(201).json(newComment);
@@ -50,7 +50,6 @@ router.post('/:roomId', authenticateToken, async (req, res) => {
 });
 
 
-// ✅ Delete a Comment
 router.delete('/:commentId', authenticateToken, async (req, res) => {
   try {
     const { commentId } = req.params;
@@ -60,14 +59,14 @@ router.delete('/:commentId', authenticateToken, async (req, res) => {
       return res.status(404).json({ message: 'Comment not found' });
     }
 
-    // Only allow the author or an admin to delete
+
     if (comment.userId.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Unauthorized to delete this comment' });
     }
 
     await comment.deleteOne();
 
-    // Emit real-time delete update
+    
     req.io.to(comment.roomId).emit('comment-deleted', commentId);
 
     res.status(200).json({ message: 'Comment deleted successfully' });

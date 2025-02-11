@@ -1,4 +1,4 @@
-// src/components/Login.js
+
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../utils/api'; 
@@ -21,18 +21,18 @@ const Login = () => {
     e.preventDefault();
     try {
       const data = await login(formData);
-      // Pass only the token string to loginUser
+      
       loginUser(data.token);
       navigate('/dashboard');
     } catch (error) {
       if (error.response) {
-        // Server responded with a status code outside the 2xx range
+       
         console.error('Login failed:', error.response.data.message);
       } else if (error.request) {
-        // No response received from server
+       
         console.error('No response from server:', error.request);
       } else {
-        // Other errors
+        
         console.error('Error during login:', error.message);
       }
     }

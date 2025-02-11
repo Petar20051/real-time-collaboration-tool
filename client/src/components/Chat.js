@@ -7,7 +7,7 @@ const Chat = ({ roomId }) => {
   const [input, setInput] = useState('');
 
   useEffect(() => {
-    // Listen for incoming messages
+   
     socket.on('receive-message', (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
@@ -19,12 +19,12 @@ const Chat = ({ roomId }) => {
 
   const sendMessage = () => {
     if (input.trim()) {
-      const message = { roomId, content: input }; // Prepare the message
+      const message = { roomId, content: input }; 
 
-      // Emit the message to the server
+     
       socket.emit('send-message', message);
 
-      // Clear the input without appending it to local messages
+      
       setInput('');
     }
   };

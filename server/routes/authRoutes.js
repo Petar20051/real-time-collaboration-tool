@@ -1,19 +1,19 @@
-// routes/authRoutes.js
+
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const router = express.Router();
 
-// Generate JWT token
+
 const generateToken = (id, role) => {
-  // Ensure id is a string (this helps avoid potential issues)
+ 
   const payload = { id: id.toString(), role };
-  // Log the payload for debugging (remove in production)
+ 
   console.log('Generating token with payload:', payload);
   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
-// Register a new user
+
 router.post('/register', async (req, res) => {
   const { username, email, password, role } = req.body;
   try {
@@ -31,7 +31,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Login user
+
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
