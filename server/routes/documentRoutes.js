@@ -111,13 +111,16 @@ router.post('/:roomId/set-password', authenticateToken, async (req, res) => {
 
 router.post('/enter-room', async (req, res) => {
   const { roomId, password } = req.body;
+  const userId = req.user.id;
 
   let document = await Document.findOne({ roomId });
 
   if (!document) return res.status(404).json({ message: 'Document not found' });
 
+  const isOwner = document.ownerId?.toString() === userId;
+
   if (!document.passwordHash) {
-    return res.json({ message: 'Room is public', access: true });
+    return res.json({ message: 'Room is public', access: true, role: isOwner ? 'owner' : 'participant' });
   }
 
   const isValid = await document.validatePassword(password);
@@ -125,9 +128,8 @@ router.post('/enter-room', async (req, res) => {
     return res.status(403).json({ message: 'Incorrect password' });
   }
 
-  res.json({ message: 'Access granted', access: true });
+  res.json({ message: 'Access granted', access: true, role: isOwner ? 'owner' : 'participant' });
 });
-
 
 router.post('/:roomId/remove-password', authenticateToken, async (req, res) => {
   const { roomId } = req.params;
@@ -136,15 +138,18 @@ router.post('/:roomId/remove-password', authenticateToken, async (req, res) => {
   let document = await Document.findOne({ roomId });
 
   if (!document) return res.status(404).json({ message: 'Document not found' });
-  if (document.ownerId.toString() !== userId) return res.status(403).json({ message: 'Not authorized' });
+  if (!document.ownerId || document.ownerId.toString() !== userId) {
+    return res.status(403).json({ message: 'Not authorized' });
+  }
 
   document.passwordHash = null;
   document.isPrivate = false;
-  document.ownerId =null;
+ document.ownerId=null;
   await document.save();
 
   res.json({ message: 'Document is now public' });
 });
+
 
 
 module.exports = router;

@@ -14,24 +14,52 @@ const socketHandler = (server) => {
   io.on('connection', (socket) => {
     console.log(`✅ User connected: ${socket.id}`);
 
-    socket.on('join-room', async ({ roomId, token }) => {
+    socket.on('join-room', async ({ roomId, token, password }) => {
       if (!roomId || !token) return socket.emit('error', 'Authentication required.');
-
+    
       try {
         const { id: userId } = jwt.verify(token, process.env.JWT_SECRET);
         const user = await User.findById(userId);
         if (!user) return socket.emit('error', 'User not found.');
-
+    
+        const document = await Document.findOne({ roomId });
+        if (!document) return socket.emit('error', 'Room not found.');
+    
+        const isOwner = document.ownerId?.toString() === userId;
+    
+        // 🔥 Prevent duplicate joins
+        if (connectedUsers[roomId]?.some(u => u.id === socket.id)) {
+          console.log(`⚠️ User ${user.username} is already in the room, preventing duplicate join.`);
+          return;
+        }
+    
+        // ✅ Owners should join without a password check
+        if (!isOwner && document.isPrivate) {
+          const isValid = await document.validatePassword(password);
+          if (!isValid) return socket.emit('error', 'Incorrect password.');
+        }
+    
         socket.join(roomId);
         connectedUsers[roomId] = [...(connectedUsers[roomId] || []), { id: socket.id, username: user.username }];
+    
         io.to(roomId).emit('user-list', connectedUsers[roomId]);
-
-      } catch {
+    
+        // ✅ Always send the `ownerId` so the frontend can check
+        socket.emit('room-joined', {
+          message: 'Access granted',
+          role: isOwner ? 'owner' : 'participant',
+          ownerId: document.ownerId?.toString(),
+        });
+    
+        console.log(`✅ User ${user.username} joined room ${roomId} as ${isOwner ? 'owner' : 'participant'}`);
+    
+      } catch (error) {
+        console.error('❌ Error joining room:', error.message);
         socket.emit('error', 'Invalid token.');
       }
     });
-
-
+    
+    
     socket.on('add-comment', async ({ roomId, content, token }) => {
       if (!content) return;
     

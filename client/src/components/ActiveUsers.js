@@ -4,7 +4,6 @@ import '../styles/ActiveUsers.css';
 const ActiveUsers = ({ users }) => {
   return (
     <div className="active-users-container">
-      <h3 className="active-users-title">Active Users</h3>
       <div className="active-users-list">
       {users.length > 0 ? (
           users.map((user,index) => (

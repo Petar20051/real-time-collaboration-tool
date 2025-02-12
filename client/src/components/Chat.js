@@ -31,7 +31,7 @@ const Chat = ({ roomId }) => {
 
   return (
     <div className="chat-container">
-      <h3 className="chat-title">Room Chat</h3>
+      
       <div className="chat-body">
         {messages.map((msg, index) => (
           <p key={index} className="chat-message">
