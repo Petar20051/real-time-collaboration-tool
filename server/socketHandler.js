@@ -7,6 +7,7 @@ const Comment = require('./models/Comment');
 const connectedUsers = {};
 const chatMessages = {}; 
 const editingUsers = {};
+const userCursors = {};
 
 const socketHandler = (server) => {
   const io = new Server(server, { cors: { origin: 'http://localhost:3000', methods: ['GET', 'POST'] } });
@@ -60,6 +61,17 @@ const socketHandler = (server) => {
     });
     
     
+    socket.on('update-cursor', ({ roomId, cursor }) => {
+      if (!roomId || !cursor) return;
+
+      if (!userCursors[roomId]) {
+        userCursors[roomId] = {};
+      }
+      userCursors[roomId][socket.id] = cursor;
+
+      io.to(roomId).emit('update-cursor', { userId: socket.id, cursor });
+    });
+
     socket.on('add-comment', async ({ roomId, content, token }) => {
       if (!content) return;
     
@@ -230,6 +242,7 @@ const socketHandler = (server) => {
           console.log(`🗑️ Clearing chat history for room ${roomId}`);
           delete chatMessages[roomId];
         }
+        Object.keys(userCursors).forEach((roomId) => delete userCursors[roomId][socket.id]);
       });
     });
   });

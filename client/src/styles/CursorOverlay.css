@@ -1,0 +1,29 @@
+.cursor-label {
+    position: absolute;
+    background: rgba(100, 100, 255, 0.8);
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: white;
+    font-weight: bold;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transform: translate(-50%, -100%); /* Move it slightly lower */
+    z-index: 1000;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+}
+
+.cursor-marker {
+    background: blue;
+    width: 2px;
+    height: 1.2em;
+    position: absolute;
+    left: 50%;
+    bottom: -4px; /* Ensures cursor aligns correctly under label */
+    transform: translateX(-50%);
+    margin-top:57px;
+    margin-left: 10px;
+}

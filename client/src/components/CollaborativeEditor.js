@@ -3,7 +3,11 @@ import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import '../styles/CollaborativeEditor.css';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 import socket from '../socket';
+import CursorOverlay from './CursorOverlay';
+
+
 
 const CollaborativeEditor = ({ roomId }) => {
   const editorRef = useRef(null);
@@ -17,6 +21,8 @@ const CollaborativeEditor = ({ roomId }) => {
   const [versionName, setVersionName] = useState('');
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [cursors, setCursors] = useState({});
+  
    
   const currentDocument = useRef(null);
 
@@ -37,6 +43,32 @@ const CollaborativeEditor = ({ roomId }) => {
           ],
         },
       });
+      
+      quillRef.current.on('selection-change', async (range) => {
+        if (range) {
+          const bounds = quillRef.current.getBounds(range.index);
+          const userId = getUserIdFromToken();
+      
+          if (!userId) return;
+      
+          const username = await fetchUsername(userId);
+      
+          socket.emit('update-cursor', {
+            roomId,
+            userId,
+            cursor: {
+              index: range.index,
+              username,
+              position: { left: bounds.left, top: bounds.top }
+            },
+          });
+        }
+      });
+      
+      
+
+      
+      
 
       quillRef.current.on('text-change', async () => {
         const content = quillRef.current.getContents();
@@ -83,11 +115,37 @@ const CollaborativeEditor = ({ roomId }) => {
         currentDocument.current = content;
       });
 
+      
+
       socket.on('editing-users', (users) => {
         setEditingUsers(users);
       });
     }
+     
+    const getUserIdFromToken = () => {
+      const token = localStorage.getItem('authToken');
+      if (!token) return null;
+      try {
+        const decoded = jwtDecode(token);
+        return decoded.id; // Assuming token structure has 'id' field
+      } catch (error) {
+        console.error("❌ Error decoding token:", error.message);
+        return null;
+      }
+    };
     
+    const fetchUsername = async (userId) => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await axios.get(`http://localhost:4000/api/users/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data.username;
+      } catch (error) {
+        console.error("❌ Error fetching username:", error.message);
+        return "Unknown User";
+      }
+    };
     
 
     const loadDocument = async () => {
@@ -113,6 +171,7 @@ const CollaborativeEditor = ({ roomId }) => {
       }
     };
 
+    
 
     const loadVersions = async () => {
       try {
@@ -150,6 +209,17 @@ const CollaborativeEditor = ({ roomId }) => {
     loadVersions();
     loadComments();
 
+    socket.on('update-cursor', ({ userId, cursor }) => {
+      console.log(`Cursor update received from ${userId}`, cursor); // Debugging log
+      setCursors((prev) => ({
+          ...prev,
+          [userId]: cursor,
+      }));
+  });
+  
+    
+
+
     socket.on('new-comment', (comment) => {
       setComments((prevComments) => [...prevComments, comment]);
     });
@@ -158,6 +228,7 @@ const CollaborativeEditor = ({ roomId }) => {
       socket.off('document-updated');
       socket.off('editing-users');
       socket.off('new-comment');
+      socket.off('update-cursor');
     };
   }, [roomId, isOffline]);
 
@@ -256,6 +327,8 @@ const CollaborativeEditor = ({ roomId }) => {
   }, []);
   
 
+  
+
   const deleteComment = useCallback((commentId) => {
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -280,6 +353,7 @@ const CollaborativeEditor = ({ roomId }) => {
       {isOffline && <p className="offline-warning">⚠️ You are offline. Changes will sync when you reconnect.</p>}
 
       <div ref={editorRef} className="editor"></div>
+      <CursorOverlay cursors={cursors} />
 
       <div className="editor-footer">
         <input
