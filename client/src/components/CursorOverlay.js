@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/CursorOverlay.css'; // ✅ Import cursor styling
+import '../styles/CursorOverlay.css'; 
 
 const CursorOverlay = ({ cursors }) => {
     return (

@@ -123,29 +123,45 @@ const CollaborativeEditor = ({ roomId }) => {
     }
      
     const getUserIdFromToken = () => {
-      const token = localStorage.getItem('authToken');
+      const token = sessionStorage.getItem('authToken'); // ✅ Use correct key name
       if (!token) return null;
+    
       try {
         const decoded = jwtDecode(token);
-        return decoded.id; // Assuming token structure has 'id' field
+        console.log("✅ Decoded token:", decoded);
+        return decoded.id || null;
       } catch (error) {
         console.error("❌ Error decoding token:", error.message);
         return null;
       }
     };
     
-    const fetchUsername = async (userId) => {
+    const fetchUsername = async () => {
+      const token = sessionStorage.getItem('authToken'); // ✅ Ensure correct key
+      if (!token) {
+        console.warn("⚠ No token found in sessionStorage.");
+        return "Unknown User";
+      }
+    
       try {
-        const token = localStorage.getItem('authToken');
-        const response = await axios.get(`http://localhost:4000/api/users/${userId}`, {
+        const response = await axios.get('http://localhost:4000/api/user/profile', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        return response.data.username;
+    
+        console.log("👤 Fetched username:", response.data.username);
+        return response.data.username || "Unknown User";
       } catch (error) {
-        console.error("❌ Error fetching username:", error.message);
+        console.error("❌ Error fetching username:", error.response?.data || error.message);
+        
+        if (error.response?.status === 401) {
+          console.warn("⚠ Unauthorized request. Clearing token.");
+          sessionStorage.removeItem('authToken'); 
+        }
+        
         return "Unknown User";
       }
     };
+    
     
 
     const loadDocument = async () => {
@@ -210,7 +226,7 @@ const CollaborativeEditor = ({ roomId }) => {
     loadComments();
 
     socket.on('update-cursor', ({ userId, cursor }) => {
-      console.log(`Cursor update received from ${userId}`, cursor); // Debugging log
+      console.log(`Cursor update received from ${userId}`, cursor); 
       setCursors((prev) => ({
           ...prev,
           [userId]: cursor,

@@ -19,12 +19,18 @@ export const AuthProvider = ({ children }) => {
   }, [auth]);
 
   const login = (token) => {
+    sessionStorage.setItem('authToken',token)
     setAuth({ token });
   };
 
   const logout = () => {
-    setAuth(null);
-  };
+    sessionStorage.removeItem('authToken'); 
+    localStorage.removeItem('authToken');
+    setAuth(null); 
+    console.log("🚪 Logged out: Token removed.");
+    window.location.reload(); 
+};
+
 
   return (
     <AuthContext.Provider value={{ auth, login, logout }}>
