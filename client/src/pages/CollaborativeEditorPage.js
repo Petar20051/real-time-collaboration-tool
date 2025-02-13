@@ -130,6 +130,7 @@ const CollaborativeEditorPage = () => {
     setIsRoomJoined(false);
     setActiveUsers([]);
     setIsOwner(false);
+    setRequiresPassword(false);
   };
 
   useEffect(() => {
@@ -189,7 +190,6 @@ const CollaborativeEditorPage = () => {
       ) : (
         <div className="collab-layout">
           <div className="sidebar">
-            {/* ✅ Move Password Manager above File Sharing */}
             <PasswordManager
               roomId={roomId}
               isOwner={isOwner}
