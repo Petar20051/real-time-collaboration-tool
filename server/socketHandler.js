@@ -142,24 +142,30 @@ const socketHandler = (server) => {
 
     socket.on('user-start-editing', ({ roomId, username }) => {
       if (!roomId || !username) return;
-
+    
       if (!editingUsers[roomId]) {
         editingUsers[roomId] = new Set();
       }
-
+    
       editingUsers[roomId].add(username);
-      io.to(roomId).emit('editing-users', Array.from(editingUsers[roomId]));
+      console.log(`📝 ${username} is editing in room ${roomId}`);
+    
+      io.to(roomId).emit('editing-users', Array.from(editingUsers[roomId])); // ✅ Send updated list
     });
-
+    
     socket.on('user-stop-editing', ({ roomId, username }) => {
       if (!roomId || !username) return;
-
+    
       if (editingUsers[roomId]) {
         editingUsers[roomId].delete(username);
+    
+        // ✅ Prevent sending undefined: If no users are left, set it to an empty array
+        const usersArray = editingUsers[roomId].size > 0 ? Array.from(editingUsers[roomId]) : [];
+    
+        io.to(roomId).emit('editing-users', usersArray);
       }
-
-      io.to(roomId).emit('editing-users', Array.from(editingUsers[roomId]));
     });
+    
    
     socket.on('send-message', ({ roomId, content }) => {
       if (!roomId || !content) return;

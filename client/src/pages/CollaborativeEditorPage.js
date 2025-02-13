@@ -122,7 +122,7 @@ const CollaborativeEditorPage = () => {
     });
   };
   
-  // ✅ Handle user leaving room
+  
   const handleLeaveRoom = () => {
     socket.emit('leave-room', roomId);
     setRoomId('');
@@ -137,7 +137,7 @@ const CollaborativeEditorPage = () => {
     if (isRoomJoined && roomId) {
       const token = localStorage.getItem('authToken');
   
-      // Prevent duplicate joins
+      
       if (!socket.hasListeners('user-list')) {
         socket.emit('join-room', { roomId, token, password });
   

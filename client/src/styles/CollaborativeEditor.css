@@ -170,3 +170,9 @@
   margin-bottom: 5px;
   border-radius: 5px;
 }
+
+.typing-animation
+{
+  font-size: large;
+  font-weight: bolder;
+}

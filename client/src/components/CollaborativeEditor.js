@@ -45,25 +45,32 @@ const CollaborativeEditor = ({ roomId }) => {
       });
       
       quillRef.current.on('selection-change', async (range) => {
+        const userId = getUserIdFromToken();
+        if (!userId) return;
+      
         if (range) {
           const bounds = quillRef.current.getBounds(range.index);
-          const userId = getUserIdFromToken();
-      
-          if (!userId) return;
-      
-          const username = await fetchUsername(userId);
+          const username = sessionStorage.getItem('username') || await fetchUsername(userId);
       
           socket.emit('update-cursor', {
             roomId,
             userId,
-            cursor: {
-              index: range.index,
-              username,
-              position: { left: bounds.left, top: bounds.top }
-            },
+            cursor: { index: range.index, username, position: { left: bounds.left, top: bounds.top } },
           });
+      
+          // ✅ Emit "user-start-editing" when a selection is made
+          socket.emit('user-start-editing', { roomId, username });
+      
+          // ✅ Set timeout to stop editing after inactivity
+          if (editTimeouts.current[username]) {
+            clearTimeout(editTimeouts.current[username]);
+          }
+          editTimeouts.current[username] = setTimeout(() => {
+            socket.emit('user-stop-editing', { roomId, username });
+          }, 5000);
         }
       });
+      
       
       
 
@@ -118,7 +125,8 @@ const CollaborativeEditor = ({ roomId }) => {
       
 
       socket.on('editing-users', (users) => {
-        setEditingUsers(users);
+        console.log("📝 Editing Users Updated:", users);
+        setEditingUsers(users); 
       });
     }
      
@@ -136,33 +144,31 @@ const CollaborativeEditor = ({ roomId }) => {
       }
     };
     
-    const fetchUsername = async () => {
-      const token = sessionStorage.getItem('authToken'); // ✅ Ensure correct key
-      if (!token) {
-        console.warn("⚠ No token found in sessionStorage.");
-        return "Unknown User";
-      }
+    const fetchUsername = async (userId) => {
+      const cachedUsername = sessionStorage.getItem(`username_${userId}`);
+      if (cachedUsername) return cachedUsername;
     
       try {
+        const token = sessionStorage.getItem('authToken');
+        if (!token) return "Unknown User";
+    
         const response = await axios.get('http://localhost:4000/api/user/profile', {
           headers: { Authorization: `Bearer ${token}` }
         });
     
-        console.log("👤 Fetched username:", response.data.username);
-        return response.data.username || "Unknown User";
+        const username = response.data.username || "Unknown User";
+        sessionStorage.setItem(`username_${userId}`, username); 
+        return username;
       } catch (error) {
         console.error("❌ Error fetching username:", error.response?.data || error.message);
-        
-        if (error.response?.status === 401) {
-          console.warn("⚠ Unauthorized request. Clearing token.");
-          sessionStorage.removeItem('authToken'); 
-        }
-        
         return "Unknown User";
       }
     };
     
-    
+    const handleEditingUsers = (users) => {
+      console.log("📝 Editing Users Updated:", users);
+      setEditingUsers(users);
+    };
 
     const loadDocument = async () => {
       try {
@@ -232,6 +238,8 @@ const CollaborativeEditor = ({ roomId }) => {
           [userId]: cursor,
       }));
   });
+
+  socket.on('editing-users', handleEditingUsers);
   
     
 
@@ -242,7 +250,7 @@ const CollaborativeEditor = ({ roomId }) => {
 
     return () => {
       socket.off('document-updated');
-      socket.off('editing-users');
+      socket.off('editing-users',handleEditingUsers);
       socket.off('new-comment');
       socket.off('update-cursor');
     };
@@ -420,14 +428,17 @@ const CollaborativeEditor = ({ roomId }) => {
       <div className="editing-users">
         <h4>Currently Editing:</h4>
         {editingUsers.length > 0 ? (
-          <ul>
-            {editingUsers.map((user, index) => (
-              <li key={index}>{user}</li>
-            ))}
-          </ul>
-        ) : (
-          <p>No one is editing right now.</p>
-        )}
+  <p className='typing-animation'>
+    📝 {editingUsers.length === 1
+      ? `${editingUsers[0]} is editing...`
+      : `${editingUsers.slice(0, 2).join(", ")} ${
+          editingUsers.length > 2 ? `and ${editingUsers.length - 2} others` : ""
+        } are editing...`}
+  </p>
+) : (
+  <p>No one is editing right now.</p>
+)}
+
       </div>
     </div>
   );
