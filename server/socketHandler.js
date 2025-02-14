@@ -8,12 +8,106 @@ const connectedUsers = {};
 const chatMessages = {}; 
 const editingUsers = {};
 const userCursors = {};
+const audioUsers={};
+const audioRooms = {};
 
 const socketHandler = (server) => {
-  const io = new Server(server, { cors: { origin: 'http://localhost:3000', methods: ['GET', 'POST'] } });
-
+  const io = new Server(server, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"],
+      credentials: true, 
+    },
+    transports: ["websocket", "polling"], 
+  });
   io.on('connection', (socket) => {
     console.log(`✅ User connected: ${socket.id}`);
+
+    socket.on("start-audio", (roomId) => {
+      if (audioRooms[roomId]) {
+        console.log(`⚠️ Meeting already active in room ${roomId}`);
+        return;
+      }
+    
+      audioRooms[roomId] = { users: new Set() };
+      console.log(`🎙️ Meeting started in room ${roomId}`);
+    
+      audioRooms[roomId].users.add(socket.id);
+      socket.join(roomId);
+    
+      io.to(roomId).emit("meeting-started", roomId);
+    
+      
+      io.to(socket.id).emit("join-audio", roomId);
+    });
+    
+    
+  
+    
+    
+
+    socket.on("join-audio", (roomId) => {
+      if (!audioRooms[roomId]) {
+        console.log(`⚠️ No active meeting in room ${roomId}`);
+        return;
+      }
+    
+      if (audioRooms[roomId].users.has(socket.id)) {
+        console.log(`⚠️ User ${socket.id} is already in room ${roomId}, preventing duplicate join.`);
+        return;
+      }
+    
+      socket.join(roomId);
+      audioRooms[roomId].users.add(socket.id);
+      console.log(`🔊 User ${socket.id} joined audio in room ${roomId}`);
+    
+      io.to(socket.id).emit("request-microphone");
+    
+      io.to(roomId).emit("update-participants", {
+        participants: Array.from(audioRooms[roomId].users),
+        muteStates: {},
+      });
+    });
+    
+
+    
+socket.on("toggle-mute", ({ roomId, userId, isMuted }) => {
+  if (!audioRooms[roomId] || !audioRooms[roomId].users.has(userId)) return;
+
+  // ✅ Track mute state
+  if (!audioUsers[userId]) {
+    audioUsers[userId] = {};
+  }
+  audioUsers[userId].muted = isMuted;
+
+  // ✅ Broadcast mute state update to all participants
+  io.to(roomId).emit("user-muted", { userId, isMuted });
+});
+
+    
+
+    // 🚪 Leave Meeting
+    socket.on("leave-audio", (roomId) => {
+      if (!audioRooms[roomId]) return; // If no meeting, do nothing
+    
+      audioRooms[roomId].users.delete(socket.id);
+      delete audioUsers[socket.id]; // ✅ Remove from mute tracking
+    
+      console.log(`🚪 User ${socket.id} left audio in room ${roomId}`);
+    
+      // ✅ If no one is left, close the meeting
+      if (audioRooms[roomId].users.size === 0) {
+        console.log(`🛑 Meeting ended in room ${roomId}`);
+        delete audioRooms[roomId]; // ✅ Remove meeting state
+        io.to(roomId).emit("meeting-ended"); // Notify all users
+      } else {
+        io.to(roomId).emit("update-participants", {
+          participants: Array.from(audioRooms[roomId].users),
+          muteStates: audioUsers,
+        });
+      }
+    });
+    
 
     socket.on('join-room', async ({ roomId, token, password }) => {
       if (!roomId || !token) return socket.emit('error', 'Authentication required.');
@@ -249,9 +343,22 @@ const socketHandler = (server) => {
           delete chatMessages[roomId];
         }
         Object.keys(userCursors).forEach((roomId) => delete userCursors[roomId][socket.id]);
+        Object.keys(audioRooms).forEach((roomId) => {
+          if (audioRooms[roomId].users.has(socket.id)) {
+            audioRooms[roomId].users.delete(socket.id);
+            console.log(`🚪 Disconnected user ${socket.id} removed from room ${roomId}`);
+  
+            if (audioRooms[roomId].users.size === 0) {
+              console.log(`🛑 Meeting ended in room ${roomId}`);
+              delete audioRooms[roomId]; // ✅ Close meeting if empty
+              io.to(roomId).emit("meeting-ended"); // Notify all users
+            } else {
+              io.to(roomId).emit("user-left-audio", socket.id);
+            }
+          }
       });
     });
   });
-};
+});}
 
 module.exports = socketHandler; 

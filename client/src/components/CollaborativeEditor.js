@@ -27,6 +27,8 @@ const CollaborativeEditor = ({ roomId }) => {
   const currentDocument = useRef(null);
 
   useEffect(() => {
+
+    
     if (!roomId) {
       console.error('❌ Room ID is not provided.');
       return;

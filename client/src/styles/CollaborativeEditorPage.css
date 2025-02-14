@@ -151,4 +151,84 @@ body {
   .remove-password-btn:hover {
     background-color: #c82333;
   }
-  
+
+  .collab-layout {
+    display: flex;
+    height: calc(100vh - 50px);
+    gap: 15px;
+    align-items: flex-start;
+}
+
+/* Sidebar takes 40% width */
+.sidebar {
+    width: 35%;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    grid-template-rows: auto auto auto;
+    gap: 12px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    align-items: start;
+}
+
+/* Components inside Sidebar */
+.password-manager,
+.chat-container,
+.active-users,
+.file-sharing,
+.audio-meeting {
+    width: 100%;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Positioning Components */
+.password-manager {
+    grid-column: span 2;
+}
+
+.active-users {
+    grid-column: 1;
+}
+
+.file-sharing {
+    grid-column: 2;
+}
+
+.audio-meeting {
+    grid-column: span 2; /* Moves closer under Active Users */
+}
+
+.editor-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 700px; /* Ensures it doesn’t shrink too much */
+}
+
+/* Fix spacing issues */
+.file-sharing {
+  grid-column: span 2; /* Full width */
+}
+
+.leave-room-btn {
+  align-self: flex-end;
+  padding: 10px 20px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
