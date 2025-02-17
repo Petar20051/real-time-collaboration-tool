@@ -9,6 +9,7 @@ const documentRoutes = require("./routes/documentRoutes");
 const userRoutes = require("./routes/userRoutes");
 const fileRoutes = require("./routes/fileRoutes");
 const commentRoutes = require("./routes/commentRoutes");
+const statRoutes = require("./routes/statsRoutes");
 
 const app = express();
 const server = http.createServer(app);
@@ -31,6 +32,7 @@ app.use("/api/documents", documentRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/files", fileRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/stats", statRoutes);
 
 const path = require("path");
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
