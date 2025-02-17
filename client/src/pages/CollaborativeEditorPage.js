@@ -152,7 +152,7 @@ const CollaborativeEditorPage = () => {
       return () => {
         socket.emit('leave-room', roomId);
         socket.off('user-list');
-        socket.off('room-joined'); // ✅ Ensures cleanup
+        socket.off('room-joined'); 
       };
     }
   }, [isRoomJoined, roomId]); 
@@ -163,87 +163,85 @@ const CollaborativeEditorPage = () => {
   }
 
  
-    return (
-      <div className="collaborative-editor-page">
-        {!isRoomJoined ? (
-          <div className="join-room-container">
-            <h1>Join a Room</h1>
+  return (
+    <div className="collaborative-editor-page">
+      {!isRoomJoined ? (
+        <div className="join-room-container">
+          <h1>Join a Room</h1>
+          <input
+            type="text"
+            value={roomId}
+            onChange={(e) => setRoomId(e.target.value)}
+            placeholder="Enter Room ID"
+            className="room-input"
+            onBlur={checkRoomStatus}
+          />
+
+          {requiresPassword && (
             <input
-              type="text"
-              value={roomId}
-              onChange={(e) => setRoomId(e.target.value)}
-              placeholder="Enter Room ID"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter Room Password"
               className="room-input"
-              onBlur={checkRoomStatus}
             />
-    
-            {requiresPassword && (
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter Room Password"
-                className="room-input"
+          )}
+
+          <button onClick={handleJoinRoom} className="join-room-btn">
+            Join Room
+          </button>
+        </div>
+      ) : (
+        <div className="collab-layout">
+          {/* Left Sidebar */}
+          <div className="sidebar">
+            <div className="audio-meeting-container">
+              <h2>Audio Meeting</h2>
+              <AudioMeeting roomId={roomId} />
+            </div>
+            <div className="password-manager">
+              <PasswordManager
+                roomId={roomId}
+                isOwner={isOwner}
+                requiresPassword={requiresPassword}
+                setIsOwner={setIsOwner}
+                setRequiresPassword={setRequiresPassword}
               />
-            )}
-    
-            <button onClick={handleJoinRoom} className="join-room-btn">
-              Join Room
-            </button>
-          </div>
-        ) : (
-          <div className="collab-layout">
-            {/* Sidebar container */}
-            <div className="sidebar">
-  <div className="password-manager">
-    <PasswordManager
-      roomId={roomId}
-      isOwner={isOwner}
-      requiresPassword={requiresPassword}
-      setIsOwner={setIsOwner}
-      setRequiresPassword={setRequiresPassword}
-    />
-  </div>
-
-  <div className="chat-container">
-    <h2>Chat</h2>
-    <Chat roomId={roomId} />
-  </div>
-
-  <div className="active-users-container">
-    <h2>Active Users</h2>
-    <ActiveUsers users={activeUsers} />
-  </div>
-
-  <div className="file-sharing-container">
-    <h2>File Sharing</h2>
-    <FileUpload roomId={roomId} />
-  </div>
-
-  <div className="audio-meeting-container">
-    <h2>Audio Meeting</h2>
-    <AudioMeeting roomId={roomId} />
-  </div>
-</div>
-    
-            {/* Main editor container */}
-            <div className="editor-container">
-              <div className="editor-header">
-                <h2>Collaborative Editor</h2>
-                <button onClick={handleLeaveRoom} className="leave-room-btn">
-                  Leave Room
-                </button>
-              </div>
-    
-              <CollaborativeEditor roomId={roomId} />
+            </div>
+            <div className="active-users-container">
+              <h2>Active Users</h2>
+              <ActiveUsers users={activeUsers} />
             </div>
           </div>
-        )}
-      </div>
-    );
-    
-  }
-  
-  
+
+          {/* Center - Editor (Full Width) */}
+          <div className="editor-container">
+            <div className="editor-header">
+              <h2>Collaborative Editor</h2>
+              <button onClick={handleLeaveRoom} className="leave-room-btn">
+                Leave Room
+              </button>
+            </div>
+            <CollaborativeEditor roomId={roomId} />
+          </div>
+
+          {/* Right Sidebar */}
+          <div className="sidebar">
+            <div className="chat-container">
+              <h2>Chat</h2>
+              <Chat roomId={roomId} />
+            </div>
+            <div className="file-sharing-container">
+              <h2>File Sharing</h2>
+              <FileUpload roomId={roomId} />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default CollaborativeEditorPage;
+  
+

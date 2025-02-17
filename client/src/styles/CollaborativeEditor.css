@@ -1,178 +1,177 @@
-/* CollaborativeEditor.css */
-
 .editor-container {
+  background: var(--card-bg, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  width: 100%;
+  max-width: 800px;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
-  position: relative;
+  gap: 15px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.offline-warning {
-  color: #ff4d4f;
-  text-align: center;
-  font-size: 16px;
-  margin-bottom: 10px;
+.editor-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .editor {
-  flex: 1;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-bottom: 20px;
+  min-height: 300px;
+  border: 1px solid var(--shadow, rgba(0, 0, 0, 0.1));
+  border-radius: 8px;
   padding: 10px;
-  background-color: #ffffff;
-  overflow-y: auto;
+  background: var(--background-color, #f9f9f9);
+}
+
+.ql-toolbar {
+  border-radius: 8px 8px 0 0 !important;
+  background: var(--card-bg, #f5f5f5);
+}
+
+.ql-container {
+  border-radius: 0 0 8px 8px !important;
+}
+
+.offline-warning {
+  background: #ffcc00;
+  color: black;
+  padding: 8px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .editor-footer {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.editor-footer input[type="text"] {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 14px;
-  flex: 1;
-  min-width: 250px;
-}
-
-.save-version-btn {
-  padding: 8px 15px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.save-version-btn:hover {
-  background-color: #0056b3;
-}
-
-.editor-footer h4 {
-  margin: 10px 0 5px;
-  font-size: 16px;
-  flex-basis: 100%;
-}
-
-.editor-footer select {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 14px;
-  min-width: 250px;
-  flex: 1;
-}
-
-.editor-footer button[disabled] {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.comment-section {
-  margin-top: 20px;
-  display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.comment-section h4 {
-  margin-bottom: 10px;
-  font-size: 18px;
-  color: #333;
+.editor-footer input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--shadow, rgba(0, 0, 0, 0.1));
+  font-size: 1rem;
+}
+
+.save-version-btn {
+  background: linear-gradient(135deg, #4a90e2, #0056b3);
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.save-version-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.comment-section {
+  background: var(--card-bg, #ffffff);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .comment-section ul {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
-  margin: 0;
-  max-height: 200px;
+  max-height: 150px;
   overflow-y: auto;
 }
 
-.comment-section li {
-  margin-bottom: 10px;
-  padding: 10px;
-  background-color: #f1f1f1;
-  border-radius: 5px;
+.comment-section ul li {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.comment-section li button {
-  background-color: #ff4d4f;
-  border: none;
-  color: white;
-  padding: 5px 8px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.comment-section li button:hover {
-  background-color: #cc0000;
-}
-
-.comment-section input[type="text"] {
+  background: var(--background-color, #f9f9f9);
   padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 14px;
-  flex: 1;
+  border-radius: 6px;
+  margin: 5px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: transform 0.2s ease;
+}
+
+.comment-section ul li:hover {
+  transform: translateX(5px);
+}
+
+.comment-section input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--shadow, rgba(0, 0, 0, 0.1));
+  margin-top: 10px;
 }
 
 .comment-section button {
-  padding: 8px 15px;
-  background-color: #007bff;
+  background: linear-gradient(135deg, #ff6b6b, #b83232);
   color: white;
   border: none;
-  border-radius: 5px;
-  font-size: 14px;
+  padding: 8px;
   cursor: pointer;
+  border-radius: 6px;
+  margin-top: 5px;
+  transition: transform 0.2s ease;
 }
 
 .comment-section button:hover {
-  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.delete-btn:hover {
+  transform: scale(1.1);
 }
 
 .editing-users {
-  margin-top: 20px;
+  background: var(--card-bg, #f5f5f5);
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.editing-users h4 {
-  margin-bottom: 10px;
-  font-size: 18px;
+.typing-animation {
+  font-weight: bold;
+  color: var(--primary-color, #4a90e2);
+  animation: typing 1.5s infinite;
 }
 
-.editing-users ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+@keyframes typing {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
 }
 
-.editing-users ul li {
-  padding: 5px;
-  background-color: #f9f9f9;
-  margin-bottom: 5px;
-  border-radius: 5px;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.typing-animation
-{
-  font-size: large;
-  font-weight: bolder;
+@media (max-width: 768px) {
+  .editor-container {
+      max-width: 100%;
+  }
+
+  .save-version-btn {
+      font-size: 0.9rem;
+  }
+
+  .comment-section ul li {
+      font-size: 0.9rem;
+  }
 }

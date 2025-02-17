@@ -1,86 +1,87 @@
-/* Reset styles to ensure full-screen usage */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    height: 100vh;
-  }
-  
-  /* Dashboard Page */
-  .dashboard-page {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100%;
-    background-color: white; /* Light background color */
-  }
-  
-  /* Dashboard Container */
+.dashboard-page {
+  background: var(--background-color, #f4f4f9);
+  min-height: 100vh;
+  padding: 20px;
+  transition: background 0.3s ease;
+}
+
+.dashboard-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.dashboard-header {
+  margin-bottom: 20px;
+}
+
+.dashboard-header h2 {
+  font-size: 2rem;
+  color: var(--primary-color, #4a90e2);
+  font-weight: bold;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.dashboard-card-container {
+  display: flex;
+  justify-content: center;
+}
+
+.dashboard-card {
+  background: var(--card-bg, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 280px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-card .card-body {
+  padding: 20px;
+}
+
+.dashboard-card .card-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.dashboard-card .card-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color, #4a90e2);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .dashboard-container {
-    flex: 1;
-    width: 100%;
+      padding: 10px;
   }
-  
-  /* Header Section */
-  .dashboard-header {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-  
+
   .dashboard-header h2 {
-    font-size: 2.5rem;
-    color: #333;
-    font-weight: bold;
+      font-size: 1.5rem;
   }
-  
-  /* Card Section */
-  .dashboard-content {
-    display: flex;
-    gap: 20px; /* Even spacing between cards */
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  
-  .dashboard-card-container {
-    display: flex;
-    justify-content: center;
-    flex-basis: 30%; /* Allows responsive resizing */
-    max-width: 300px;
-    margin-bottom: 20px;
-  }
-  
+
   .dashboard-card {
-    width: 100%;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    background-color: #fff;
+      max-width: 100%;
   }
-  
-  .dashboard-card:hover {
-    transform: translateY(-5px); /* Subtle hover effect */
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  .dashboard-card-title {
-    font-size: 1.5rem;
-    color: #007bff;
-    margin-bottom: 10px;
-  }
-  
-  .dashboard-card-text {
-    font-size: 1rem;
-    color: #555;
-  }
-  
-  .main{
-    padding: 0px;
-  }
-  
+}

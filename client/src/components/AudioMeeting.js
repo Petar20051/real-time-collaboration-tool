@@ -135,7 +135,7 @@ const AudioMeeting = ({ roomId }) => {
   }, []);
 
   useEffect(() => {
-    if (!socket) return; // ✅ Prevents execution when `socket` is null
+    if (!socket) return; 
   
     const handleMicRequest = () => {
       navigator.mediaDevices.getUserMedia({ audio: true })

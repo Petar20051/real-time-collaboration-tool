@@ -1,98 +1,95 @@
-/* Apply styles only inside the navigation bar */
+/* Navbar Styling */
 .navbar {
-  position: fixed; /* Make it stay on top */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 70px; /* Slightly increased for better visibility */
-  background-color: #212529;
-  color: white;
+  background: linear-gradient(135deg, #4a90e2, #0056b3);
+  padding: 15px 20px;
   display: flex;
-  justify-content: center; /* Centers content */
+  justify-content: center;
   align-items: center;
-  padding: 0 30px;
-  z-index: 1000; /* Ensure it stays on top */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s ease;
 }
 
-/* Container to hold content in a defined max-width */
 .navbar-container {
-  display: flex;
   width: 100%;
-  max-width: 1200px; /* Prevents elements from stretching too much */
+  max-width: 1200px;
+  display: flex;
   justify-content: space-evenly;
   align-items: center;
 }
 
-/* Branding */
+/* Brand Logo */
 .navbar-brand a {
-  font-size: 1.6rem; /* Slightly bigger for better visibility */
+  font-size: 1.5rem;
   font-weight: bold;
   color: white;
   text-decoration: none;
-  transition: color 0.3s;
+  transition: color 0.3s ease;
 }
 
 .navbar-brand a:hover {
-  color: #00bcd4;
+  color: #ffdd57;
 }
 
 /* Navigation Links */
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 20px; /* Increased spacing for better readability */
+  gap: 20px;
 }
 
 .nav-link {
   color: white;
   text-decoration: none;
   font-size: 1rem;
-  font-weight: 500;
-  transition: color 0.3s ease-in-out;
-  padding: 10px 15px; /* Consistent padding */
+  font-weight: bold;
+  transition: color 0.3s ease, transform 0.2s ease;
+  padding: 8px 12px;
+  border-radius: 6px;
 }
 
 .nav-link:hover {
-  color: #00bcd4;
-  text-decoration: underline;
+  color: #ffdd57;
+  transform: scale(1.1);
 }
 
 /* Logout Button */
 .logout-button {
-  font-size: 1rem;
-  padding: 10px 20px;
+  background: linear-gradient(135deg, #ff6b6b, #b83232);
   color: white;
-  background-color: #dc3545;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  padding: 10px 15px;
+  font-size: 1rem;
   font-weight: bold;
-  transition: background-color 0.3s ease-in-out;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .logout-button:hover {
-  background-color: #c82333;
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Responsive Design */
+/* Responsive Navigation */
 @media (max-width: 768px) {
   .navbar-container {
-    flex-direction: column;
-    gap: 10px;
+      flex-direction: column;
+      text-align: center;
   }
 
   .navbar-links {
-    flex-wrap: wrap;
-    justify-content: center;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
   }
 
   .nav-link {
-    font-size: 0.9rem;
-    padding: 8px 12px;
+      font-size: 1rem;
+      padding: 10px;
   }
 
   .logout-button {
-    padding: 8px 16px;
-    font-size: 0.9rem;
+      width: 100%;
+      max-width: 200px;
   }
 }

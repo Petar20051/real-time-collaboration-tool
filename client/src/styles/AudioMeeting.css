@@ -1,121 +1,111 @@
 .audio-meeting-container {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    margin: 20px auto;
-    text-align: center;
-    border: 1px solid #ddd;
+  background: var(--card-bg, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.audio-meeting-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.audio-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 12px 18px;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin: 10px;
+}
+
+.start-btn {
+  background: linear-gradient(135deg, #28a745, #1d8a37);
+  color: white;
+}
+
+.join-btn {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+}
+
+.leave-btn {
+  background: linear-gradient(135deg, #dc3545, #a81f30);
+  color: white;
+}
+
+.mute-btn {
+  background: linear-gradient(135deg, #ffcc00, #d4a800);
+  color: black;
+}
+
+.mute-btn.muted {
+  background: linear-gradient(135deg, #888, #666);
+  color: white;
+}
+
+.audio-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.participants-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 15px;
+  color: var(--text-color, #333);
+}
+
+.participants-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.participants-list li {
+  background: var(--card-bg, #f5f5f5);
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.participants-list li:hover {
+  transform: translateX(5px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.audio-meeting-container {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+@media (max-width: 768px) {
+  .audio-meeting-container {
+      max-width: 100%;
   }
-  
-  .audio-title {
-    font-size: 22px;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: #333;
-  }
-  
+
   .audio-btn {
-    display: inline-block;
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    transition: 0.3s ease;
+      font-size: 0.9rem;
+      padding: 10px 14px;
   }
-  
-  .start-btn {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .start-btn:hover {
-    background-color: #218838;
-  }
-  
-  .join-btn {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .join-btn:hover {
-    background-color: #0056b3;
-  }
-  
-  .leave-btn {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .leave-btn:hover {
-    background-color: #c82333;
-  }
-  
-  .mute-btn {
-    background-color: #ffc107;
-    color: black;
-  }
-  
-  .mute-btn:hover {
-    background-color: #e0a800;
-  }
-  
-  .muted {
-    background-color: #ffc107 !important;
-    color: black !important;
-  }
-  
-  .participants-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 15px;
-  }
-  
-  .participants-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .participants-list li {
-    background: #f8f9fa;
-    margin: 5px 0;
-    padding: 8px;
-    border-radius: 5px;
-    font-weight: bold;
-    color: #333;
-  }
-
-  .audio-meeting {
-    width: 100%;
-    background: white;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
-
-.audio-meeting button {
-    width: 100%;
-    padding: 10px;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.3s ease;
-}
-
-.audio-meeting .start-btn {
-    background-color: #28a745;
-    color: white;
-    border: none;
-}
-
-.audio-meeting .start-btn:hover {
-    background-color: #218838;
-}
-
-  

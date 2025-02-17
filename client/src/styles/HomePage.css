@@ -1,130 +1,137 @@
-/* Reset styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body, html {
-    height: 100%;
-    width: 100%;
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
-}
-
-/* Home Page Container */
 .home-page {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    min-height: 100vh;
-    background-color: white;
-}
-
-/* Hero Section - Proper Sizing */
-.home-header {
-    width: 100%;
-    min-height: 60vh; /* Adjusted for better balance */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #2563eb, #1e3a8a);
-    color: white;
     text-align: center;
+    background: var(--background-color, #f9f9f9);
+    color: var(--text-color, #333);
+    font-family: 'Poppins', sans-serif;
 }
 
-/* Hero Content - Adjust Width */
-.home-hero-content {
-    width: 100%;
-    max-width: 700px;
-    padding: 20px;
+/* Hero Section */
+.home-header {
+    background: linear-gradient(135deg, #4a90e2, #0056b3);
+    color: white;
+    padding: 100px 20px;
+    text-align: center;
+    border-radius: 0 0 50px 50px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.8s ease-in-out;
 }
 
 .home-hero-content h1 {
-    font-size: 3.5rem; /* Increase size for better visibility */
-    font-weight: bold;
+    font-size: 2.5rem;
     margin-bottom: 15px;
 }
 
 .home-hero-content p {
-    font-size: 1.5rem; /* Increase text size */
+    font-size: 1.2rem;
     margin-bottom: 20px;
-    color:black;
 }
 
-/* CTA Button */
 .home-cta-button {
-    padding: 14px 28px;
-    background: white;
-    color: #2563eb;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
+    background: linear-gradient(135deg, #ff6b6b, #b83232);
+    color: white;
     border: none;
-    transition: background 0.3s;
+    padding: 12px 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .home-cta-button:hover {
-    background: #e0e7ff;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Sections */
+/* Features & How It Works */
 .home-container {
-    width: 100%;
-    padding: 60px 20px;
-    text-align: center;
+    padding: 50px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    animation: fadeIn 0.8s ease-in-out;
 }
 
-/* Grid Layout */
+.home-section-title {
+    font-size: 2rem;
+    color: var(--primary-color, #4a90e2);
+    margin-bottom: 20px;
+}
+
 .home-content {
     display: flex;
-    gap: 20px;
     justify-content: center;
-    align-items: center;
     flex-wrap: wrap;
+    gap: 20px;
 }
 
-/* Feature Cards */
 .home-card {
-    flex-basis: 30%;
-    max-width: 300px;
+    background: var(--card-bg, #ffffff);
     padding: 20px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    width: 300px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .home-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-/* CTA Section */
+/* Call to Action Section */
 .home-cta {
-    background: linear-gradient(135deg, #2563eb, #1e3a8a);
+    background: linear-gradient(135deg, #ff6b6b, #b83232);
     color: white;
-    text-align: center;
     padding: 50px 20px;
-    border-radius: 10px;
+    text-align: center;
+    margin-top: 50px;
+    border-radius: 12px;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+.home-cta h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
 }
 
 /* Footer */
 .home-footer {
-    background-color: #1f2937;
-    color: white;
+    padding: 15px;
+    background: var(--card-bg, #ffffff);
     text-align: center;
-    padding: 20px;
-    margin-top: 40px;
+    border-top: 1px solid var(--shadow, rgba(0, 0, 0, 0.1));
     font-size: 0.9rem;
+    color: var(--text-color, #777);
+    margin-top: 30px;
 }
 
-.home-content {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    max-width: 1200px; /* Prevent extreme stretching */
-    margin: 0 auto;
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
+/* Responsive Design */
+@media (max-width: 768px) {
+    .home-hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .home-hero-content p {
+        font-size: 1rem;
+    }
+
+    .home-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .home-card {
+        width: 90%;
+    }
+
+    .home-cta h2 {
+        font-size: 1.5rem;
+    }
+}
