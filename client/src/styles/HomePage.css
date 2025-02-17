@@ -1,0 +1,130 @@
+/* Reset styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Home Page Container */
+.home-page {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    background-color: white;
+}
+
+/* Hero Section - Proper Sizing */
+.home-header {
+    width: 100%;
+    min-height: 60vh; /* Adjusted for better balance */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #2563eb, #1e3a8a);
+    color: white;
+    text-align: center;
+}
+
+/* Hero Content - Adjust Width */
+.home-hero-content {
+    width: 100%;
+    max-width: 700px;
+    padding: 20px;
+}
+
+.home-hero-content h1 {
+    font-size: 3.5rem; /* Increase size for better visibility */
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.home-hero-content p {
+    font-size: 1.5rem; /* Increase text size */
+    margin-bottom: 20px;
+    color:black;
+}
+
+/* CTA Button */
+.home-cta-button {
+    padding: 14px 28px;
+    background: white;
+    color: #2563eb;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    transition: background 0.3s;
+}
+
+.home-cta-button:hover {
+    background: #e0e7ff;
+}
+
+/* Sections */
+.home-container {
+    width: 100%;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+/* Grid Layout */
+.home-content {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Feature Cards */
+.home-card {
+    flex-basis: 30%;
+    max-width: 300px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* CTA Section */
+.home-cta {
+    background: linear-gradient(135deg, #2563eb, #1e3a8a);
+    color: white;
+    text-align: center;
+    padding: 50px 20px;
+    border-radius: 10px;
+}
+
+/* Footer */
+.home-footer {
+    background-color: #1f2937;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    font-size: 0.9rem;
+}
+
+.home-content {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 1200px; /* Prevent extreme stretching */
+    margin: 0 auto;
+}
+
