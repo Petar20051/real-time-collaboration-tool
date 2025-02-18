@@ -233,7 +233,7 @@ body {
   animation: slow-blink 1.8s infinite; /* Slightly slower blinking */
 }
 
-/* Slow Cursor Blinking Animation */
+
 @keyframes slow-blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }

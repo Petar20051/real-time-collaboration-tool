@@ -3,6 +3,9 @@
   min-height: 100vh;
   padding: 20px;
   transition: background 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .dashboard-container {
@@ -44,6 +47,11 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Move last card slightly lower */
+.dashboard-card:last-child {
+  margin-bottom: 40px;
+}
+
 .dashboard-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -83,5 +91,10 @@
 
   .dashboard-card {
       max-width: 100%;
+  }
+
+  /* Adjust last card spacing on smaller screens */
+  .dashboard-card:last-child {
+      margin-bottom: 60px;
   }
 }
