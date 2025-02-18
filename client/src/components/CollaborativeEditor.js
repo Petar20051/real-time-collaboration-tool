@@ -22,6 +22,8 @@ const CollaborativeEditor = ({ roomId }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [cursors, setCursors] = useState({});
+  const [isEditorFocused, setIsEditorFocused] = useState(false);
+
   
    
   const currentDocument = useRef(null);
@@ -71,6 +73,8 @@ const CollaborativeEditor = ({ roomId }) => {
             socket.emit('user-stop-editing', { roomId, username });
           }, 5000);
         }
+        
+        
       });
       
       
@@ -172,6 +176,8 @@ const CollaborativeEditor = ({ roomId }) => {
       setEditingUsers(users);
     };
 
+
+    
     const loadDocument = async () => {
       try {
         const token = localStorage.getItem('authToken');
@@ -258,6 +264,50 @@ const CollaborativeEditor = ({ roomId }) => {
     };
   }, [roomId, isOffline]);
 
+  useEffect(() => {
+    if (!quillRef.current) return;
+
+    // ✅ Detect when editor gains focus
+    const handleEditorFocus = () => {
+        console.log('Editor Focused'); // 🔍 Debugging Log
+        setIsEditorFocused(true);
+    };
+
+    // ✅ Detect when selection changes (for text selection)
+    const handleSelectionChange = (range) => {
+        console.log('Selection Changed:', range); // 🔍 Debugging Log
+        setIsEditorFocused(!!range); // Show cursor when selecting text
+    };
+
+    quillRef.current.root.addEventListener('focus', handleEditorFocus); // Listen for focus
+    quillRef.current.on('selection-change', handleSelectionChange);
+
+    return () => {
+        quillRef.current.root.removeEventListener('focus', handleEditorFocus);
+        quillRef.current.off('selection-change', handleSelectionChange);
+    };
+}, [roomId]);
+
+
+useEffect(() => {
+  const handleClickOutside = (event) => {
+      if (editorRef.current && !editorRef.current.contains(event.target)) {
+          console.log('Clicked outside editor'); // 🔍 Debugging Log
+          setIsEditorFocused(false);
+          setCursors({}); // ✅ Hide all cursors when unfocused
+      }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+
+
+
   const saveNewVersion = async () => {
     try {
       const token = localStorage.getItem('authToken');
@@ -298,7 +348,7 @@ const CollaborativeEditor = ({ roomId }) => {
       }
   
       socket.emit('add-comment', { roomId, content: newComment, token });
-      setNewComment(''); // ✅ Clear input after sending
+      setNewComment(''); 
 
     } catch (error) {
       console.error('❌ Error posting comment:', error.response?.data || error.message);
@@ -340,6 +390,10 @@ const CollaborativeEditor = ({ roomId }) => {
     };
   }, [syncOfflineChanges]);
 
+
+  
+
+
   useEffect(() => {
     const handleCommentDeleted = (deletedCommentId) => {
       setComments((prevComments) => prevComments.filter(comment => comment._id !== deletedCommentId));
@@ -367,10 +421,9 @@ const CollaborativeEditor = ({ roomId }) => {
       return;
     }
   
-    // ✅ Now sending token properly
+    
     socket.emit('delete-comment', { commentId, token });
   }, []);
-  
   
   
 
@@ -379,7 +432,7 @@ const CollaborativeEditor = ({ roomId }) => {
       {isOffline && <p className="offline-warning">⚠️ You are offline. Changes will sync when you reconnect.</p>}
 
       <div ref={editorRef} className="editor"></div>
-      <CursorOverlay cursors={cursors} />
+      {isEditorFocused && <CursorOverlay cursors={cursors} />}
 
       <div className="editor-footer">
         <input

@@ -218,7 +218,7 @@ body {
   transform: translate(5px, -90%); /* Moves slightly to the right and lower */
   z-index: 1000;
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
-  pointer-events: none;
+  pointer-events: visible;
 }
 
 /* Cursor Marker (Blinking cursor at text position) */
@@ -230,13 +230,13 @@ body {
   left: 2px; /* Moves slightly right */
   bottom: -5px; /* Moves it slightly lower */
   transform: translateX(-1px);
-  animation: slow-blink 1.8s infinite; /* Slightly slower blinking */
+  animation: slow-blink 3s infinite; /* Slightly slower blinking */
 }
 
 
 @keyframes slow-blink {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  50% { opacity: 0.9; }
 }
 
 /* Ensure the Editor has position relative */
