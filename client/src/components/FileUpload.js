@@ -56,6 +56,7 @@ const FileUpload = ({ roomId }) => {
 
   return (
     <div className="file-upload-container">
+      <h3>File Sharing</h3>
       <div className="file-upload-controls">
         <input type="file" onChange={handleFileChange} />
         <button onClick={handleFileUpload} className="upload-button">

@@ -225,14 +225,13 @@ const CollaborativeEditorPage = () => {
             <CollaborativeEditor roomId={roomId} />
           </div>
 
-          {/* Right Sidebar */}
+         
           <div className="sidebar">
             <div className="chat-container">
               <h2>Chat</h2>
               <Chat roomId={roomId} />
             </div>
             <div className="file-sharing-container">
-              <h2>File Sharing</h2>
               <FileUpload roomId={roomId} />
             </div>
           </div>

@@ -183,7 +183,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  transition: box-shadow 0.3s ease;
 }
 
 /* Spacing adjustments */

@@ -43,7 +43,11 @@
 }
 
 .profile-card strong {
-  color: var(--secondary-color, #ff6b6b);
+  color: var(--secondary-color, #0a0101);
+}
+
+.profile-info strong{
+  color:#0a0101
 }
 
 /* Animations */

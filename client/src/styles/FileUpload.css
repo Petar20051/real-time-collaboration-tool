@@ -64,6 +64,14 @@
   overflow-y: auto;
 }
 
+h3{
+  font-size: 27px;
+  color: var(--primary-color, #4a90e2);
+  font-weight: bolder;
+  margin-bottom: 20px;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
 .shared-files ul li {
   background: var(--background-color, #f9f9f9);
   padding: 8px;

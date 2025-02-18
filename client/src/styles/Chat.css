@@ -1,3 +1,4 @@
+/* Chat Container */
 .chat-container {
     background: var(--card-bg, #ffffff);
     border-radius: 12px;
@@ -10,13 +11,11 @@
     flex-direction: column;
     justify-content: space-between;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
+    margin-bottom: 60px;
+    overflow: hidden;
 }
 
-.chat-container:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
+/* Chat Messages */
 .chat-body {
     flex-grow: 1;
     overflow-y: auto;
@@ -24,8 +23,13 @@
     border-radius: 8px;
     background: var(--background-color, #f9f9f9);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 320px;
 }
 
+/* Scrollbar Styling */
 .chat-body::-webkit-scrollbar {
     width: 6px;
 }
@@ -40,24 +44,37 @@
     border-radius: 10px;
 }
 
+/* Chat Message */
 .chat-message {
     background: var(--card-bg, #f5f5f5);
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 6px;
+    padding: 10px 15px;
+    border-radius: 10px;
     font-size: 1rem;
     font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    animation: fadeIn 0.4s ease-in-out;
+    max-width: 80%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease-in-out;
 }
 
-.chat-message strong {
-    font-weight: bold;
-    color: var(--primary-color, #4a90e2);
+/* Sent Messages */
+.chat-message.sent {
+    align-self: flex-end;
+    background: var(--primary-color, #4a90e2);
+    color: white;
+    text-align: right;
 }
 
+/* Received Messages */
+.chat-message.received {
+    align-self: flex-start;
+    background: var(--secondary-bg, #f0f0f0);
+    color: var(--text-color, #333);
+    text-align: left;
+}
+
+/* Chat Input */
 .chat-input-container {
     display: flex;
     align-items: center;
@@ -79,6 +96,7 @@
     outline: none;
 }
 
+/* Send Button */
 .chat-send-btn {
     background: linear-gradient(135deg, #4a90e2, #0056b3);
     color: white;
@@ -95,15 +113,7 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.chat-container {
-    animation: fadeIn 0.6s ease-in-out;
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
     .chat-container {
         max-width: 100%;

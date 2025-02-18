@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom'; // Redirect to settings
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import '../styles/Profile.css';
 
 const Profile = () => {
   const [profileData, setProfileData] = useState(null);
   const { auth } = useContext(AuthContext);
+  const navigate = useNavigate(); // For navigation
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -18,7 +20,7 @@ const Profile = () => {
         });
         setProfileData(response.data);
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        console.error('❌ Error fetching profile:', error);
       }
     };
 
@@ -28,25 +30,31 @@ const Profile = () => {
   }, [auth]);
 
   if (!profileData) {
-    return <div>Loading...</div>;
+    return <div className="loading">Loading...</div>;
   }
 
+  // Fix date formatting
+  const formattedDate = profileData.createdAt
+    ? new Date(profileData.createdAt).toLocaleDateString()
+    : 'N/A';
+
   return (
-    <Container fluid className="profile-page">
-      <Row>
-        <Col md={12}>
-          <h2 className="profile-title">Profile</h2>
+    <Container className="profile-page">
+      <Row className="justify-content-center">
+        <Col md={6} lg={5}>
           <Card className="profile-card">
-            <Card.Header>
-              <h3>Username: {profileData.username}</h3>
+            <Card.Header className="profile-header">
+              <h2>👤 {profileData.username}</h2>
             </Card.Header>
             <Card.Body>
-              <p>
-                <strong>Email:</strong> {profileData.email}
-              </p>
-              <p>
-                <strong>Role:</strong> {profileData.role}
-              </p>
+              <div className="profile-info">
+                <p><strong>Email:</strong> {profileData.email}</p>
+                <p><strong>Role:</strong> {profileData.role}</p>
+                <p><strong>Joined:</strong> {formattedDate}</p>
+              </div>
+              <Button className="profile-edit-btn" onClick={() => navigate('/settings')}>
+                ✏️ Edit Profile
+              </Button>
             </Card.Body>
           </Card>
         </Col>
