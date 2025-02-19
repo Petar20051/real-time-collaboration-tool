@@ -1,4 +1,4 @@
-/* ✅ Reset & Global Styles */
+
 * {
   margin: 0;
   padding: 0;
@@ -10,7 +10,7 @@ body {
   background: #f8f9fa;
 }
 
-/* ✅ Main Layout */
+
 .collaborative-editor-page {
   display: flex;
   flex-direction: column;
@@ -18,22 +18,22 @@ body {
   padding: 20px;
 }
 
-/* ✅ Three-Column Layout */
+
 .collab-layout {
   display: grid;
-  grid-template-columns: 1.5fr 5fr 1.5fr; /* Increased center column width */
-  gap: 50px; /* Adds spacing between the columns */
+  grid-template-columns: 1.5fr 5fr 1.5fr; 
+  gap: 50px; 
   height: 100%;
   padding: 20px;
   align-items: flex-start;
 }
 
-/* ✅ Left & Right Sidebar Styling */
+
 .left-sidebar,
 .right-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 30px; /* Adds spacing between elements inside sidebars */
+  gap: 30px; 
   background: #ffffff;
   padding: 20px;
   border-radius: 10px;
@@ -42,17 +42,17 @@ body {
   overflow-y: auto;
 }
 
-/* ✅ Add Extra Space Between Individual Components Inside Sidebars */
+
 .left-sidebar > div,
 .right-sidebar > div {
   padding: 20px;
   border-radius: 8px;
   background: #f9f9f9;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px; /* Increased spacing between elements */
+  margin-bottom: 30px; 
 }
 
-/* ✅ Main Editor Styling */
+
 .editor-container {
   display: flex;
   flex-direction: column;
@@ -65,7 +65,7 @@ body {
   overflow-y: auto;
 }
 
-/* ✅ Editor Header */
+
 .editor-header {
   display: flex;
   justify-content: space-between;
@@ -74,12 +74,12 @@ body {
   border-bottom: 2px solid #ddd;
 }
 
-/* ✅ Move Audio Meeting to Top Left */
+
 .audio-meeting-container {
-  order: -1; /* Moves audio meeting to the top of the left sidebar */
+  order: -1; 
 }
 
-/* ✅ Leave Room Button */
+
 .leave-room-btn {
   background: red;
   color: white;
@@ -95,7 +95,7 @@ body {
   background: darkred;
 }
 
-/* ✅ Join Room Container */
+
 .join-room-container {
   display: flex;
   flex-direction: column;
@@ -141,16 +141,16 @@ body {
   background: #0056b3;
 }
 
-/* ✅ Responsive Design */
+
 @media (max-width: 1200px) {
   .collab-layout {
-    grid-template-columns: 1fr 4fr 1fr; /* Slightly smaller sidebars */
+    grid-template-columns: 1fr 4fr 1fr; 
   }
 }
 
 @media (max-width: 992px) {
   .collab-layout {
-    grid-template-columns: 1fr 3fr; /* Remove right sidebar for medium screens */
+    grid-template-columns: 1fr 3fr; 
   }
 
   .right-sidebar {
@@ -160,7 +160,7 @@ body {
 
 @media (max-width: 768px) {
   .collab-layout {
-    grid-template-columns: 1fr; /* Single column layout on small screens */
+    grid-template-columns: 1fr; 
   }
 
   .left-sidebar,
@@ -171,38 +171,38 @@ body {
 }
 
 
-/* Editor should take more space */
+
 .editor-container {
   background: var(--card-bg, #ffffff);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   padding: 20px;
   width: 100%;
-  max-width: none; /* Remove fixed max-width */
-  flex-grow: 1; /* Allow to take more space */
+  max-width: none; 
+  flex-grow: 1; 
   display: flex;
   flex-direction: column;
   gap: 15px;
   transition: box-shadow 0.3s ease;
 }
 
-/* Spacing adjustments */
+
 .left-sidebar, .right-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 25px; /* More space between items */
+  gap: 25px; 
 }
 
-/* Center the layout properly */
+
 .collab-layout {
   display: grid;
-  grid-template-columns: 1fr 4fr 1fr; /* Sidebars take less space, editor takes more */
-  gap: 30px; /* More spacing between columns */
-  align-items: flex-start; /* Align items to the top */
+  grid-template-columns: 1fr 4fr 1fr; 
+  gap: 30px; 
+  align-items: flex-start; 
 }
 
 
-/* Cursor Label (Username above the cursor) */
+
 .cursor-label {
   position: absolute;
   background: rgba(100, 100, 255, 0.9);
@@ -215,22 +215,22 @@ body {
   display: flex;
   align-items: center;
   gap: 4px;
-  transform: translate(5px, -90%); /* Moves slightly to the right and lower */
+  transform: translate(5px, -90%); 
   z-index: 1000;
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
   pointer-events: visible;
 }
 
-/* Cursor Marker (Blinking cursor at text position) */
+
 .cursor-marker {
   background: blue;
   width: 2px;
   height: 1.4em;
   position: absolute;
-  left: 2px; /* Moves slightly right */
-  bottom: -5px; /* Moves it slightly lower */
+  left: 2px; 
+  bottom: -5px; 
   transform: translateX(-1px);
-  animation: slow-blink 3s infinite; /* Slightly slower blinking */
+  animation: slow-blink 3s infinite; 
 }
 
 
@@ -239,7 +239,7 @@ body {
   50% { opacity: 0.9; }
 }
 
-/* Ensure the Editor has position relative */
+
 .editor-container {
   position: relative;
 }

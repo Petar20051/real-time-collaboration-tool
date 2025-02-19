@@ -1,4 +1,4 @@
-/* Chat Container */
+
 .chat-container {
     background: var(--card-bg, #ffffff);
     border-radius: 12px;
@@ -15,7 +15,7 @@
     overflow: hidden;
 }
 
-/* Chat Messages */
+
 .chat-body {
     flex-grow: 1;
     overflow-y: auto;
@@ -29,7 +29,7 @@
     max-height: 320px;
 }
 
-/* Scrollbar Styling */
+
 .chat-body::-webkit-scrollbar {
     width: 6px;
 }
@@ -44,7 +44,7 @@
     border-radius: 10px;
 }
 
-/* Chat Message */
+
 .chat-message {
     background: var(--card-bg, #f5f5f5);
     padding: 10px 15px;
@@ -58,7 +58,7 @@
     transition: background 0.3s ease-in-out;
 }
 
-/* Sent Messages */
+
 .chat-message.sent {
     align-self: flex-end;
     background: var(--primary-color, #4a90e2);
@@ -66,7 +66,7 @@
     text-align: right;
 }
 
-/* Received Messages */
+
 .chat-message.received {
     align-self: flex-start;
     background: var(--secondary-bg, #f0f0f0);
@@ -74,7 +74,7 @@
     text-align: left;
 }
 
-/* Chat Input */
+
 .chat-input-container {
     display: flex;
     align-items: center;
@@ -96,7 +96,7 @@
     outline: none;
 }
 
-/* Send Button */
+
 .chat-send-btn {
     background: linear-gradient(135deg, #4a90e2, #0056b3);
     color: white;
@@ -113,7 +113,7 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
     .chat-container {
         max-width: 100%;

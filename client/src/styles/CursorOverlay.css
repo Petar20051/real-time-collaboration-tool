@@ -10,7 +10,7 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    transform: translate(-50%, -100%); /* Move it slightly lower */
+    transform: translate(-50%, -100%); 
     z-index: 1000;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
     pointer-events: none;
@@ -22,7 +22,7 @@
     height: 1.2em;
     position: absolute;
     left: 50%;
-    bottom: -4px; /* Ensures cursor aligns correctly under label */
+    bottom: -4px; 
     transform: translateX(-50%);
     margin-top:73px;
     margin-left: 21px;

@@ -1,4 +1,4 @@
-/* Active Users Container */
+
 .active-users-container {
     background: var(--card-bg, #ffffff);
     border-radius: 12px;
@@ -10,13 +10,13 @@
     margin-top: 60px;
 }
 
-/* Fancy hover effect on the whole container */
+
 .active-users-container:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
 }
 
-/* Active Users List */
+
 .active-users-list {
     display: flex;
     flex-direction: column;
@@ -26,7 +26,7 @@
     padding-right: 10px;
 }
 
-/* Scrollbar Customization */
+
 .active-users-list::-webkit-scrollbar {
     width: 6px;
 }
@@ -41,7 +41,7 @@
     border-radius: 10px;
 }
 
-/* Individual Active User */
+
 .active-user {
     padding: 12px;
     background: linear-gradient(135deg, var(--primary-color, #4a90e2), var(--secondary-color, #ff6b6b));
@@ -55,13 +55,13 @@
     animation: fadeIn 0.5s ease-in forwards;
 }
 
-/* Hover effect on active users */
+
 .active-user:hover {
     transform: scale(1.05);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* No Active Users Message */
+
 .no-active-users {
     text-align: center;
     color: var(--text-color, #666);
@@ -69,13 +69,12 @@
     font-style: italic;
 }
 
-/* Smooth fade-in effect */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
     .active-users-container {
         max-width: 100%;

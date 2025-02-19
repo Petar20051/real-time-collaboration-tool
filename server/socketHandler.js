@@ -28,84 +28,85 @@ const socketHandler = (server) => {
         console.log(`⚠️ Meeting already active in room ${roomId}`);
         return;
       }
-    
       audioRooms[roomId] = { users: new Set() };
       console.log(`🎙️ Meeting started in room ${roomId}`);
-    
       audioRooms[roomId].users.add(socket.id);
       socket.join(roomId);
-    
       io.to(roomId).emit("meeting-started", roomId);
-    
-      
+     
       io.to(socket.id).emit("join-audio", roomId);
     });
-    
-    
-  
-    
-    
 
     socket.on("join-audio", (roomId) => {
       if (!audioRooms[roomId]) {
         console.log(`⚠️ No active meeting in room ${roomId}`);
         return;
       }
-    
       if (audioRooms[roomId].users.has(socket.id)) {
         console.log(`⚠️ User ${socket.id} is already in room ${roomId}, preventing duplicate join.`);
         return;
       }
-    
       socket.join(roomId);
       audioRooms[roomId].users.add(socket.id);
       console.log(`🔊 User ${socket.id} joined audio in room ${roomId}`);
-    
+      
       io.to(socket.id).emit("request-microphone");
-    
       io.to(roomId).emit("update-participants", {
         participants: Array.from(audioRooms[roomId].users),
-        muteStates: {},
+        muteStates: audioUsers,
       });
     });
-    
 
-    
-socket.on("toggle-mute", ({ roomId, userId, isMuted }) => {
-  if (!audioRooms[roomId] || !audioRooms[roomId].users.has(userId)) return;
 
-  // ✅ Track mute state
-  if (!audioUsers[userId]) {
-    audioUsers[userId] = {};
+socket.on("get-meeting-status", (roomId) => {
+  if (audioRooms[roomId]) {
+    console.log(`Meeting is already active in room ${roomId} for socket ${socket.id}`);
+    socket.emit("meeting-started", roomId);
   }
-  audioUsers[userId].muted = isMuted;
-
-  // ✅ Broadcast mute state update to all participants
-  io.to(roomId).emit("user-muted", { userId, isMuted });
 });
 
-    
 
-    // 🚪 Leave Meeting
+    socket.on("toggle-mute", ({ roomId, userId, isMuted }) => {
+      if (!audioRooms[roomId] || !audioRooms[roomId].users.has(userId)) return;
+      if (!audioUsers[userId]) {
+        audioUsers[userId] = {};
+      }
+      audioUsers[userId].muted = isMuted;
+      io.to(roomId).emit("user-muted", { userId, isMuted });
+    });
+
     socket.on("leave-audio", (roomId) => {
-      if (!audioRooms[roomId]) return; // If no meeting, do nothing
-    
+      if (!audioRooms[roomId]) return;
       audioRooms[roomId].users.delete(socket.id);
-      delete audioUsers[socket.id]; // ✅ Remove from mute tracking
-    
+      delete audioUsers[socket.id];
       console.log(`🚪 User ${socket.id} left audio in room ${roomId}`);
-    
-      // ✅ If no one is left, close the meeting
       if (audioRooms[roomId].users.size === 0) {
         console.log(`🛑 Meeting ended in room ${roomId}`);
-        delete audioRooms[roomId]; // ✅ Remove meeting state
-        io.to(roomId).emit("meeting-ended"); // Notify all users
+        delete audioRooms[roomId];
+        io.to(roomId).emit("meeting-ended");
       } else {
         io.to(roomId).emit("update-participants", {
           participants: Array.from(audioRooms[roomId].users),
           muteStates: audioUsers,
         });
       }
+    });
+
+    
+
+    socket.on("webrtc-offer", ({ offer, to }) => {
+      console.log(`Forwarding WebRTC offer from ${socket.id} to ${to}`);
+      io.to(to).emit("webrtc-offer", { offer, from: socket.id });
+    });
+
+    socket.on("webrtc-answer", ({ answer, to }) => {
+      console.log(`Forwarding WebRTC answer from ${socket.id} to ${to}`);
+      io.to(to).emit("webrtc-answer", { answer, from: socket.id });
+    });
+
+    socket.on("webrtc-candidate", ({ candidate, to }) => {
+      console.log(`Forwarding ICE candidate from ${socket.id} to ${to}`);
+      io.to(to).emit("webrtc-candidate", { candidate, from: socket.id });
     });
     
 
@@ -122,13 +123,13 @@ socket.on("toggle-mute", ({ roomId, userId, isMuted }) => {
     
         const isOwner = document.ownerId?.toString() === userId;
     
-        // 🔥 Prevent duplicate joins
+        
         if (connectedUsers[roomId]?.some(u => u.id === socket.id)) {
           console.log(`⚠️ User ${user.username} is already in the room, preventing duplicate join.`);
           return;
         }
     
-        // ✅ Owners should join without a password check
+        
         if (!isOwner && document.isPrivate) {
           const isValid = await document.validatePassword(password);
           if (!isValid) return socket.emit('error', 'Incorrect password.');
@@ -139,7 +140,7 @@ socket.on("toggle-mute", ({ roomId, userId, isMuted }) => {
     
         io.to(roomId).emit('user-list', connectedUsers[roomId]);
     
-        // ✅ Always send the `ownerId` so the frontend can check
+       
         socket.emit('room-joined', {
           message: 'Access granted',
           role: isOwner ? 'owner' : 'participant',
@@ -244,7 +245,7 @@ socket.on("toggle-mute", ({ roomId, userId, isMuted }) => {
       editingUsers[roomId].add(username);
       console.log(`📝 ${username} is editing in room ${roomId}`);
     
-      io.to(roomId).emit('editing-users', Array.from(editingUsers[roomId])); // ✅ Send updated list
+      io.to(roomId).emit('editing-users', Array.from(editingUsers[roomId])); 
     });
     
     socket.on('user-stop-editing', ({ roomId, username }) => {
@@ -253,7 +254,7 @@ socket.on("toggle-mute", ({ roomId, userId, isMuted }) => {
       if (editingUsers[roomId]) {
         editingUsers[roomId].delete(username);
     
-        // ✅ Prevent sending undefined: If no users are left, set it to an empty array
+        
         const usersArray = editingUsers[roomId].size > 0 ? Array.from(editingUsers[roomId]) : [];
     
         io.to(roomId).emit('editing-users', usersArray);
@@ -350,8 +351,8 @@ socket.on("toggle-mute", ({ roomId, userId, isMuted }) => {
   
             if (audioRooms[roomId].users.size === 0) {
               console.log(`🛑 Meeting ended in room ${roomId}`);
-              delete audioRooms[roomId]; // ✅ Close meeting if empty
-              io.to(roomId).emit("meeting-ended"); // Notify all users
+              delete audioRooms[roomId]; 
+              io.to(roomId).emit("meeting-ended"); 
             } else {
               io.to(roomId).emit("user-left-audio", socket.id);
             }

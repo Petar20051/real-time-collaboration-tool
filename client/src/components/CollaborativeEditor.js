@@ -62,10 +62,10 @@ const CollaborativeEditor = ({ roomId }) => {
             cursor: { index: range.index, username, position: { left: bounds.left, top: bounds.top } },
           });
       
-          // ✅ Emit "user-start-editing" when a selection is made
+          
           socket.emit('user-start-editing', { roomId, username });
       
-          // ✅ Set timeout to stop editing after inactivity
+          
           if (editTimeouts.current[username]) {
             clearTimeout(editTimeouts.current[username]);
           }
@@ -137,7 +137,7 @@ const CollaborativeEditor = ({ roomId }) => {
     }
      
     const getUserIdFromToken = () => {
-      const token = sessionStorage.getItem('authToken'); // ✅ Use correct key name
+      const token = sessionStorage.getItem('authToken'); 
       if (!token) return null;
     
       try {
@@ -267,19 +267,19 @@ const CollaborativeEditor = ({ roomId }) => {
   useEffect(() => {
     if (!quillRef.current) return;
 
-    // ✅ Detect when editor gains focus
+   
     const handleEditorFocus = () => {
-        console.log('Editor Focused'); // 🔍 Debugging Log
+        console.log('Editor Focused');
         setIsEditorFocused(true);
     };
 
-    // ✅ Detect when selection changes (for text selection)
+    
     const handleSelectionChange = (range) => {
-        console.log('Selection Changed:', range); // 🔍 Debugging Log
-        setIsEditorFocused(!!range); // Show cursor when selecting text
+        console.log('Selection Changed:', range); 
+        setIsEditorFocused(!!range); 
     };
 
-    quillRef.current.root.addEventListener('focus', handleEditorFocus); // Listen for focus
+    quillRef.current.root.addEventListener('focus', handleEditorFocus); 
     quillRef.current.on('selection-change', handleSelectionChange);
 
     return () => {
@@ -292,9 +292,9 @@ const CollaborativeEditor = ({ roomId }) => {
 useEffect(() => {
   const handleClickOutside = (event) => {
       if (editorRef.current && !editorRef.current.contains(event.target)) {
-          console.log('Clicked outside editor'); // 🔍 Debugging Log
+          console.log('Clicked outside editor'); 
           setIsEditorFocused(false);
-          setCursors({}); // ✅ Hide all cursors when unfocused
+          setCursors({}); 
       }
   };
 
@@ -402,7 +402,7 @@ useEffect(() => {
     socket.on('comment-deleted', handleCommentDeleted);
   
     return () => {
-      socket.off('comment-deleted', handleCommentDeleted); // ✅ Ensures cleanup
+      socket.off('comment-deleted', handleCommentDeleted); 
     };
   }, []);
   

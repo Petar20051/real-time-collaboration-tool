@@ -2,18 +2,18 @@ const express = require('express');
 const router = express.Router();
 const Document = require('../models/Document');
 const User = require('../models/User');
-const { authenticateToken } = require('../middleware/authMiddleware'); // Correct import
+const { authenticateToken } = require('../middleware/authMiddleware'); 
 
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const userId = req.user.id; // Extract userId from JWT
+    const userId = req.user.id; 
 
     const totalUsers = await User.estimatedDocumentCount();
     const documentsCreated = await Document.countDocuments({ ownerId: userId });
     const privateDocuments = await Document.countDocuments({ ownerId: userId, isPrivate: true });
     const publicDocuments = await Document.countDocuments({ ownerId: userId, isPrivate: false });
 
-    // Fetch roomIds and password hashes of owned documents
+   
     const ownedRooms = await Document.find({ ownerId: userId })
       .select('roomId passwordHash')
       .lean();

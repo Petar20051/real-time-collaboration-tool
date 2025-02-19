@@ -47,7 +47,7 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Move last card slightly lower */
+
 .dashboard-card:last-child {
   margin-bottom: 40px;
 }
@@ -73,13 +73,13 @@
   color: var(--primary-color, #4a90e2);
 }
 
-/* Animations */
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
   .dashboard-container {
       padding: 10px;
@@ -93,7 +93,7 @@
       max-width: 100%;
   }
 
-  /* Adjust last card spacing on smaller screens */
+  
   .dashboard-card:last-child {
       margin-bottom: 60px;
   }

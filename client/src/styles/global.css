@@ -1,4 +1,4 @@
-/* ==== 1. Reset and Base Styles ==== */
+
 * {
     margin: 0;
     padding: 0;
@@ -13,7 +13,7 @@ body {
     transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* ==== 2. CSS Variables (Customize Your Theme) ==== */
+
 :root {
     --primary-color: #4a90e2;
     --secondary-color: #ff6b6b;
@@ -24,7 +24,7 @@ body {
     --border-radius: 8px;
 }
 
-/* ==== 3. Typography & Layout ==== */
+
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     letter-spacing: 0.5px;
@@ -41,7 +41,7 @@ p {
     margin: 0 auto;
 }
 
-/* ==== 4. Buttons (Modern Look) ==== */
+
 button {
     background: var(--primary-color);
     color: white;
@@ -58,7 +58,7 @@ button:hover {
     box-shadow: 0 4px 10px var(--shadow);
 }
 
-/* ==== 5. Form Inputs ==== */
+
 input, textarea {
     width: 100%;
     padding: 10px;
@@ -72,7 +72,7 @@ input:focus, textarea:focus {
     outline: none;
 }
 
-/* ==== 6. Card Styles ==== */
+
 .card {
     background: var(--card-bg);
     padding: 20px;
@@ -86,7 +86,6 @@ input:focus, textarea:focus {
     box-shadow: 0 8px 20px var(--shadow);
 }
 
-/* ==== 7. Navbar (Basic Modern Design) ==== */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -108,7 +107,7 @@ input:focus, textarea:focus {
     color: var(--primary-color);
 }
 
-/* ==== 8. Fancy Animations ==== */
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -128,7 +127,7 @@ input:focus, textarea:focus {
 }
 
 
-/* ==== 10. Responsive Design ==== */
+
 @media (max-width: 768px) {
     .container {
         width: 95%;

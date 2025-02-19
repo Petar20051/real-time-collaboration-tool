@@ -34,26 +34,26 @@ const CollaborativeEditorPage = () => {
         return;
       }
   
-      const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode JWT payload
-      const userId = decodedToken.id; // Extract user ID
+      const decodedToken = JSON.parse(atob(token.split('.')[1])); 
+      const userId = decodedToken.id; 
   
-      // 🔍 Fetch room details before joining
+      
       const response = await axios.get(`http://localhost:4000/api/documents/${roomId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
       const roomData = response.data;
   
-      // ✅ Check if the user is the owner
+      
       if (roomData.ownerId === userId) {
         console.log("✅ Owner detected, joining without password.");
         setRequiresPassword(false);
         setIsOwner(true);
-        joinRoom({ token, password: null }); // 🔥 Owner joins immediately
+        joinRoom({ token, password: null }); 
         return;
       }
   
-      // 🚨 If the room is private and the user is NOT the owner, ask for a password
+      
       if (roomData.isPrivate) {
         setRequiresPassword(true);
         setIsOwner(false);
@@ -80,13 +80,13 @@ const CollaborativeEditorPage = () => {
       return;
     }
   
-    // ✅ If password is required but not entered, show the password input
+   
     if (requiresPassword && !password.trim()) {
       alert('Please enter the password to join this room.');
       return;
     }
   
-    // ✅ If no password is required OR password is entered, join the room
+   
     joinRoom({ token, password });
   };
   
@@ -100,21 +100,21 @@ const CollaborativeEditorPage = () => {
         return;
       }
   
-      const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode JWT payload
-      const userId = decodedToken.id; // Extract user ID
+      const decodedToken = JSON.parse(atob(token.split('.')[1])); 
+      const userId = decodedToken.id; 
   
-      // ✅ Set the owner state correctly
+      
       const isOwner = data.ownerId === userId;
   
       setIsRoomJoined(true);
       setIsOwner(isOwner);
-      setRequiresPassword(!isOwner && data.role === 'participant'); // Only non-owners see password input
+      setRequiresPassword(!isOwner && data.role === 'participant'); 
   
-      // ✅ Request active users after joining
+     
       socket.emit('request-active-users', roomId);
     });
   
-    // ✅ Listen for updates to active users
+    
     socket.on('user-list', (users) => {
       setActiveUsers(users);
     });
@@ -193,7 +193,7 @@ const CollaborativeEditorPage = () => {
         </div>
       ) : (
         <div className="collab-layout">
-          {/* Left Sidebar */}
+         
           <div className="sidebar">
             <div className="audio-meeting-container">
               <h2>Audio Meeting</h2>
@@ -214,7 +214,7 @@ const CollaborativeEditorPage = () => {
             </div>
           </div>
 
-          {/* Center - Editor (Full Width) */}
+          
           <div className="editor-container">
             <div className="editor-header">
               <h2>Collaborative Editor</h2>

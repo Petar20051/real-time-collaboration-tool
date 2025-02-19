@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "../styles/HomePage.css"; // Import the CSS file
+import "../styles/HomePage.css"; 
 
 const HomePage = () => {
   return (
     <div className="home-page">
-      {/* Hero Section */}
+      
       <header className="home-header">
         <div className="home-hero-content">
           <h1>Collaborate in Real-Time, Anywhere.</h1>
@@ -16,7 +16,7 @@ const HomePage = () => {
         </div>
       </header>
 
-      {/* Features Section */}
+      
       <section className="home-container">
         <h2 className="home-section-title">Why Choose Us?</h2>
         <div className="home-content">
@@ -35,7 +35,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* How It Works */}
+    
       <section className="home-container">
         <h2 className="home-section-title">How It Works</h2>
         <div className="home-content">
@@ -54,7 +54,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Call to Action */}
+     
       <section className="home-cta">
         <h2>Ready to Collaborate?</h2>
         <Link to="/login">
@@ -62,7 +62,7 @@ const HomePage = () => {
         </Link>
       </section>
 
-      {/* Footer */}
+     
       <footer className="home-footer">
         <p>&copy; {new Date().getFullYear()} Collaborative Platform. All rights reserved.</p>
       </footer>

@@ -50,13 +50,13 @@
   color:#0a0101
 }
 
-/* Animations */
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
   .profile-title {
       font-size: 1.7rem;

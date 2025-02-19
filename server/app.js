@@ -14,19 +14,19 @@ const statRoutes = require("./routes/statsRoutes");
 const app = express();
 const server = http.createServer(app);
 
-// ✅ Connect to Database
+
 connectDB();
 
-// ✅ Middleware
+
 app.use(
   cors({
-    origin: "http://localhost:3000", // Allow frontend requests
-    credentials: true, // ✅ Allow WebSocket credentials
+    origin: "http://localhost:3000", 
+    credentials: true, 
   })
 );
 app.use(express.json());
 
-// ✅ Routes
+
 app.use("/api/auth", authRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/user", userRoutes);
@@ -37,27 +37,27 @@ app.use("/api/stats", statRoutes);
 const path = require("path");
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ✅ API Base Route
+
 app.get("/api", (req, res) => {
   res.status(200).json({ message: "API is ready for feature development!" });
 });
 
-// ✅ Initialize Socket.io WebSockets
+
 socketHandler(server);
 
-// ✅ Error Handling Middleware
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Something went wrong!" });
 });
 
-// ✅ Start Server
+
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
 
-// ✅ Graceful Shutdown
+
 process.on("SIGTERM", () => {
   server.close(() => {
     console.log("🛑 Process terminated");

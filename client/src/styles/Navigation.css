@@ -1,4 +1,4 @@
-/* Navbar Styling */
+
 .navbar {
   background: linear-gradient(135deg, #4a90e2, #0056b3);
   padding: 15px 20px;
@@ -17,7 +17,7 @@
   align-items: center;
 }
 
-/* Brand Logo */
+
 .navbar-brand a {
   font-size: 1.5rem;
   font-weight: bold;
@@ -30,7 +30,7 @@
   color: #ffdd57;
 }
 
-/* Navigation Links */
+
 .navbar-links {
   display: flex;
   align-items: center;
@@ -52,7 +52,7 @@
   transform: scale(1.1);
 }
 
-/* Logout Button */
+
 .logout-button {
   background: linear-gradient(135deg, #ff6b6b, #b83232);
   color: white;
@@ -70,7 +70,7 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Responsive Navigation */
+
 @media (max-width: 768px) {
   .navbar-container {
       flex-direction: column;

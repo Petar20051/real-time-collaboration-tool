@@ -1,4 +1,4 @@
-/* Global styles for authentication pages */
+
 .auth-container {
   max-width: 400px;
   margin: 50px auto;
@@ -59,13 +59,13 @@
   margin-bottom: 10px;
 }
 
-/* Fade-in animation */
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive Design */
+
 @media (max-width: 600px) {
   .auth-container {
       max-width: 90%;

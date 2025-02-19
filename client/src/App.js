@@ -15,17 +15,17 @@ function App() {
   return (
     <Router>
       <div className="app-container">
-        {/* Navigation Bar */}
+       
         <Navigation />
 
-        {/* Main Routes */}
+       
         <main>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
 
-            {/* Protected Routes */}
+           
             <Route 
               path="/dashboard" 
               element={

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom'; // Redirect to settings
+import { useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
@@ -8,7 +8,7 @@ import '../styles/Profile.css';
 const Profile = () => {
   const [profileData, setProfileData] = useState(null);
   const { auth } = useContext(AuthContext);
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -33,7 +33,7 @@ const Profile = () => {
     return <div className="loading">Loading...</div>;
   }
 
-  // Fix date formatting
+  
   const formattedDate = profileData.createdAt
     ? new Date(profileData.createdAt).toLocaleDateString()
     : 'N/A';

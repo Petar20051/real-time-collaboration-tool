@@ -81,7 +81,7 @@ const Dashboard = () => {
               </Col>
             </Row>
 
-            {/* Display Owned Room IDs Without Passwords */}
+          
             <Row className="dashboard-content">
               <Col md={12} className="dashboard-card-container">
                 <Card className="dashboard-card">

@@ -5,13 +5,13 @@ import '../styles/Chat.css';
 const Chat = ({ roomId }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
-  const chatEndRef = useRef(null); // Reference for auto-scrolling
+  const chatEndRef = useRef(null); 
 
   useEffect(() => {
-    // Listen for incoming messages
+    
     socket.on('receive-message', (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
-      scrollToBottom(); // Auto-scroll when a new message arrives
+      scrollToBottom(); 
     });
 
     return () => {
@@ -24,14 +24,14 @@ const Chat = ({ roomId }) => {
       const message = { roomId, content: input }; 
       socket.emit('send-message', message);
       setInput('');
-      scrollToBottom(); // Auto-scroll when sending a message
+      scrollToBottom(); 
     }
   };
 
   const scrollToBottom = () => {
     setTimeout(() => {
       chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 100); // Slight delay for a smoother scroll
+    }, 100); 
   };
 
   return (
@@ -42,7 +42,7 @@ const Chat = ({ roomId }) => {
             <strong>{msg.username === socket.id ? 'Me' : msg.username}:</strong> {msg.content}
           </p>
         ))}
-        <div ref={chatEndRef} /> {/* Invisible element to ensure scroll to bottom */}
+        <div ref={chatEndRef} /> 
       </div>
       <div className="chat-input-container">
         <input
